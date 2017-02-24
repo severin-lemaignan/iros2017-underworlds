@@ -256,7 +256,7 @@ position correction}); and \textbf{transformers} which transform one
 representation into another (like the \emph{Semantic mapping} client on
 Figure~\ref{fig|scene}).
 
-\subsection{Worlds}
+\subsubsection{Worlds}
 
 Worlds are effectively distributed data structures composed of a scene graph
 representing the 3D geometry of the environment, and a timeline storing temporal
@@ -268,13 +268,13 @@ create a dependency between worlds. A client like the \textit{Physics-based
 position correction} client create a dependency between the world {\tt base} (which
 represents here the result of raw sensor fusion) and the world {\tt corrected}
 which would be a physically-consistent copy of {\tt base}.
-As a result, a \uwds network can be seen as a dependency graph between worlds (where
+As a result, an \uwds network can be seen as a dependency graph between worlds (where
 cyclic dependencies are permissible).
 
 This architecture enables what we call \emph{cascading situation assessment}:
-a set of independent software components (the clients) builds and refines
-successive models of the environment by a combination of
-filtering/transformations steps and model branching.
+independent software components (the clients) build, refine and share successive
+models of the environment by a combination of filtering/transformations steps
+and model branching.
 
 \subsubsection{Scenes}
 
@@ -297,14 +297,17 @@ associated meshes.
 
 \subsubsection{Timelines}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.9\linewidth]{timeline}
-    \caption{Both events and episodes are stored in the world's \emph{timeline}}
+Complementing the spatial representation encapsulated in the scene graph, each
+world also store the world's \emph{timeline}. This data structure is shared
+and synchronized amongst the clients in the same way as the scene graph.
+Client can record in the timeline both \emph{events} (duration-less state) and
+\emph{situations}, \ie states with a start time and a (possibly open-ended) end time.
 
-    \label{fig|timeline}
-\end{figure}
-
+Importantly, the \uwds server automatically generates a snapshot of
+the scene graph whenever an event or situation is added to the timeline. The
+snapshot is associated to the event, which allows clients to effectively retrieve past
+states of the world. This capability is thought to be primarly used by \uwds clients
+performing action recognition.
 
 \subsection{Distributed spatio-temporal models}
 \label{arch}
@@ -356,7 +359,7 @@ Python, Go and Java on Windows, Mac and Linux).
 
 The cross-platform/cross-language support of gRPC is especially welcomed in the
 academic context, as it offers ease and flexibility to plug a variety of
-pre-existing components into a \uwds network.
+pre-existing components into an \uwds network.
 
 
 However, the gRPC message passing layer is low-level with respect to the typical
