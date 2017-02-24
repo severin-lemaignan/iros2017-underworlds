@@ -44,7 +44,7 @@ Cascading Situation Assessment for Robots
 \newcommand{\resp}{\textit{resp.}\xspace}
 \newcommand{\cf}{cf.\xspace}
 
-\newcommand{\uwds}{{\tt underworlds}\xspace}
+\newcommand{\uwds}{{\sc underworlds}\xspace}
 
 \graphicspath{{figs/}}
 
@@ -208,7 +208,7 @@ connected through shared data structures called \emph{worlds}.
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{overview}
-    \caption{Schema of a \uwds network: eight possible, user-written
+    \caption{Schema of a possible \uwds network: eight possible, user-written
     \emph{clients} (in blue) are exchanging environment models through four shared
     \emph{worlds} (made of joint spatial and temporal models). This architecture
     enables successive and modular refinement of the models
@@ -254,14 +254,32 @@ create a dependency between worlds. A client like the \textit{Physics-based
 position correction} client create a dependency between the world {\tt base} (which
 represents here the result of raw sensor fusion) and the world {\tt corrected}
 which would be a physically-consistent copy of {\tt base}.
+As a result, a \uwds network can be seen as a dependency graph between worlds (where
+cyclic dependencies are permissible).
 
-As a result, a \uwds network can be seen as a dependency graph (where
-cyclic dependencies are permissible), and we call the whole architecture a
-\emph{cascading situation assessment} system.
+This architecture enables what we call \emph{cascading situation assessment}:
+a set of independent software components (the clients) builds and refines
+successive models of the environment by a combination of
+filtering/transformations steps and model branching.
 
 \subsubsection{Scenes}
 
-\subsubsection{Nodes}
+\emph{Worlds} contain both a geometric model and a temporal model. The geometric
+model is represented as a scene graph. The scene graph has a unique root node,
+to which a tree of other nodes is parented.
+
+Nodes in the scene graph have four possible types: \textbf{objects} that represent
+concrete physical objects (typically with one or several associated 3D meshes);
+\textbf{entities} that represent abstract entities like reference frames or
+groups of objects; \textbf{perspectives} that represent viewpoints onto the
+scene (like cameras or human gaze); and \textbf{fields} that represent scalar or
+vector fields (like the visibility of an object, the working space of robot,
+etc. -- note that fields are not yet implemented in the current version of
+\uwds, see section~\ref{futurework}).
+
+Every node has a unique ID, a parent, a 3D transformation relative to the parent
+and an optional name. \emph{Object} nodes optionally store as well pointers to their
+associated meshes.
 
 \subsubsection{Timelines}
 
@@ -460,6 +478,7 @@ The scenario consists of a number of \uwds clients that communicate with each ot
 \section{Conclusion}
 
 \subsection{Future work}
+\label{futurework}
 
 Representation of fields
 
