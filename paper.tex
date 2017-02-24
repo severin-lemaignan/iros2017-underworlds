@@ -13,6 +13,9 @@
 
 \usepackage[utf8x]{inputenc}
 \usepackage{graphicx}
+
+\usepackage{hyperref}
+
 % See the \addtolength command later in the file to balance the column lengths
 % on the last page of the document
 
@@ -326,7 +329,7 @@ client in the network.
 
 As previously mentioned, worlds are composite data structures comprising of a
 scene graph and a timeline. These data structures are synchronized using
-Google's gRPC message passing framework\footnote{http://www.grpc.io/}, ensuring
+Google's gRPC message passing framework\footnote{\url{http://www.grpc.io/}}, ensuring
 high throughput, reliability, cross-platform/cross-language support. The \uwds
 API is specifically discussed hereafter, section~\ref{api}.
 
@@ -352,7 +355,9 @@ full data whenever they actually need it.
 \label{api}
 
 As mentioned in section~\ref{arch}, \uwds uses Google's gRPC as message passing
-protocol. The protocol is explicitely defined, and bindings to various languages
+protocol. The protocol is explicitely defined (using the \emph{protocol
+buffers}\footnote{\url{https://developers.google.com/protocol-buffers/}}
+interface definition language), and bindings to various languages
 and platforms can be automatically generated from the protocol definition file
 (as of Feb 2017, gRPC can generate bindings for C, C++, C\#, Node.js, PHP, Ruby,
 Python, Go and Java on Windows, Mac and Linux).
@@ -438,10 +443,22 @@ other \uwds clients as expected.
 
 {\tt uwds explorer}
 
+%%TODO add screenshot of uwds explorer
 
 \subsubsection{Interface with ROS}
 
-{\tt uwds tf}
+\uwds is meant to integrate as easily as possible into existing robot
+architectures, and interfaces transparently with ROS' TF frame system through
+the {\tt uwds tf} client.
+
+The {\tt uwds tf} root client continuously monitor the ROS TF tree, and mirror
+TF frames as nodes in a given \uwds world. A node is first created if none
+matches a given TF frame, and its transformation is subsequently updated,
+mirroring the TF frame. A regular expression can be provided to only mirror a
+subset of the TF tree into \uwds.
+
+Currently, the process is unidirectional: the {\tt uwds tf} client performs TF
+to \uwds updates, but not the opposite.
 
 \subsection{Spatial Reasoning}
 
