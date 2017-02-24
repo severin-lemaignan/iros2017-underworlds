@@ -147,7 +147,7 @@ and different timescales.
 
 
 
-\subsection{Situation Assessment}
+\subsection{Cascading Situation Assessment}
 
 Anchoring perceptions in a symbolic model requires perception abilities and
 their symbolic interpretation. We call \emph{physical situation assessment} the
@@ -197,7 +197,13 @@ is required to compute what the human is looking at).
 
 \section{Design and Architecture}
 
-\subsection{A layered model of the environment}
+\subsection{Cascading architecture}
+
+Figure~\ref{fig|scene} pictures a typically \uwds topology: a graph (that
+happens to be a directed acyclic graph on Figure~\ref{fig|scene}, but does not
+have to be in the general case -- cycles are permitted) of \emph{clients}
+connected through shared data structures called \emph{worlds}.
+
 
 \begin{figure}
     \centering
@@ -208,10 +214,65 @@ is required to compute what the human is looking at).
     enables successive and modular refinement of the models
     (\emph{cascading} situation assessment), effectively adapted to each
     client's needs (yellow nodes represent other possible components in the system that do not
-interact directly with the \uwds network).} \label{fig|scene} \end{figure}
+    interact directly with the \uwds network).}
 
-(worlds are effectively composed of a scene graph representing the 3D geometry
-of the environment, and a timeline storing temporal events)
+    \label{fig|scene}
+
+\end{figure}
+
+\subsubsection{Clients}
+
+Software components accessing \uwds worlds are called clients. Some standard
+clients (like a 3D visualization tool) are provided with the \uwds package (see
+section~\ref{std_clients}), but clients are otherwise written by the end users
+using the \uwds client API (see section~\ref{api}).
+
+Clients can both read and write onto the worlds they are connected to, and
+automatically see updates broadcasted by other clients connected to the same
+worlds.
+
+Four specific types of clients can be distinguished: \textbf{root clients} which
+create and update worlds (`write-only' client, like the \emph{Sensor fusion} and
+\emph{ROS interface} clients on Figure~\ref{fig|scene}); \textbf{leaf clients}
+which on the contrary only read worlds, without modifying them (like the
+\emph{Computation of spatial relations} client on Figure~\ref{fig|scene});
+\textbf{filters} that copy an input world into an output world, performing
+some filtering operation in-between (like the client \textit{Physics-based
+position correction}); and \textbf{transformers} which transform one
+representation into another (like the \emph{Semantic mapping} client on
+Figure~\ref{fig|scene}).
+
+\subsection{Worlds}
+
+Worlds are effectively distributed data structures composed of a scene graph
+representing the 3D geometry of the environment, and a timeline storing temporal
+events.
+
+Each world is technically independent from every others. Dependencies between
+worlds arise from the clients' connections. For instance, filters effectively
+create a dependency between worlds. A client like the \textit{Physics-based
+position correction} client create a dependency between the world {\tt base} (which
+represents here the result of raw sensor fusion) and the world {\tt corrected}
+which would be a physically-consistent copy of {\tt base}.
+
+As a result, a \uwds network can be seen as a dependency graph (where
+cyclic dependencies are permissible), and we call the whole architecture a
+\emph{cascading situation assessment} system.
+
+\subsubsection{Scenes}
+
+\subsubsection{Nodes}
+
+\subsubsection{Timelines}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{timeline}
+    \caption{Both events and episodes are stored in the world's \emph{timeline}}
+
+    \label{fig|timeline}
+\end{figure}
+
 
 \subsection{Distributed spatio-temporal models}
 \label{arch}
@@ -249,25 +310,6 @@ updated; only a hash value of the mesh data. The client can then request the
 full data whenever they actually need it.
 
 
-\subsection{Cascading architecture}
-
-Figure~\ref{fig|scene} pictures a typically \uwds topology.
-
-
-\subsection{Worlds}
-\subsubsection{Scenes}
-
-\subsubsection{Nodes}
-
-\subsubsection{Timelines}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.9\linewidth]{timeline}
-    \caption{Both events and episodes are stored in the world's \emph{timeline}}
-
-    \label{fig|timeline}
-\end{figure}
 
 \section{API \& Clients}
 
@@ -327,7 +369,7 @@ with underworlds.Context("walls_filter") as ctx:
 \end{listing}
 
 \subsection{Standard Clients}
-
+\label{std_clients}
 
 \subsubsection{3D Visualization}
 

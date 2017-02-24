@@ -203,11 +203,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="259.21211"
-     inkscape:cy="248.10847"
+     inkscape:zoom="1.979899"
+     inkscape:cx="308.11802"
+     inkscape:cy="92.911016"
      inkscape:document-units="px"
-     inkscape:current-layer="g5347"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1025"
@@ -226,7 +226,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -235,6 +235,23 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(-36.601848,-465.8222)">
+    <g
+       style="stroke-width:0.75416768;stroke-miterlimit:4;stroke-dasharray:none"
+       transform="matrix(0.03378261,1.3255346,-1.3255346,0.03378261,627.62638,1167.4317)"
+       id="g4751">
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.75416768;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -248.06579,231.08259 22.49799,0.57338"
+         id="path4753"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:#000000;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m -223.84567,231.705 -2.75235,-1.6132 0,3.21329 z"
+         id="path4755"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccc" />
+    </g>
     <g
        id="g6172"
        transform="matrix(-1.3255346,0.03378261,-0.03378261,-1.3255346,-147.10463,1089.3763)"
@@ -364,13 +381,13 @@
     </g>
     <g
        id="g5997"
-       transform="matrix(0.03378261,1.3255346,-1.3255346,0.03378261,618.34067,1167.4317)"
+       transform="matrix(-0.03378261,-1.3255346,1.3255346,-0.03378261,-21.039515,574.30951)"
        style="stroke-width:0.75416768;stroke-miterlimit:4;stroke-dasharray:none">
       <path
          sodipodi:nodetypes="cc"
          inkscape:connector-curvature="0"
          id="path5999"
-         d="m -248.06579,231.08259 22.49799,0.57338"
+         d="m -235.1414,231.41198 9.5736,0.24399"
          style="fill:none;stroke:#000000;stroke-width:0.75416768;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <path
          sodipodi:nodetypes="cccc"
@@ -3101,18 +3118,18 @@
          sodipodi:linespacing="125%"
          id="text5989"
          y="945.02893"
-         x="615.3963"
+         x="609.08081"
          style="font-style:normal;font-weight:normal;font-size:33.73753357px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.3157734;stroke-miterlimit:4;stroke-dasharray:none"
          xml:space="preserve"><tspan
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;stroke-width:0.3157734;stroke-miterlimit:4;stroke-dasharray:none"
            y="945.02893"
-           x="615.3963"
+           x="609.08081"
            id="tspan5991"
            sodipodi:role="line"><tspan
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:cmmi10;-inkscape-font-specification:cmmi10"
              id="tspan5993">world</tspan><tspan
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Courier;-inkscape-font-specification:Courier;stroke-width:0.3157734;stroke-miterlimit:4;stroke-dasharray:none"
-             id="tspan5995"> after_motion</tspan></tspan></text>
+             id="tspan5995"> post_planning</tspan></tspan></text>
     </g>
     <g
        style="stroke-width:0.2075858;stroke-miterlimit:4;stroke-dasharray:none"
