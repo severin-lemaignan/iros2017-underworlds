@@ -492,30 +492,29 @@ integrated in a robot which computes symbolic positions of objects.
     \caption{A user manipulating objects on RFID mat while an operator monitors the interaction via an {\tt uwds view} client}
     \label{fig|l2torexample}
 \end{figure}
-\uwds has been used within the European L2TOR project~\cite{belpaeme2015l2tor} in order to conceptualize and visualize the spatial relations and visibility of the physical objects that users interact with. In one of the scenarios of this project, users are instructed by a NAO robot to manipulate a number of Duplo-like animals on top of a printed background paper. The robot instructions are based on pedagogical strategies to promote spatial relation learning by object manipulation. Such instructions include commands like to place the elephant \textit{on top} or \textit{next to} the cube or put the giraffe \textit{inside} the house.     
+\uwds has been used within the European L2TOR project~\cite{belpaeme2015l2tor} in order to conceptualize and visualize the spatial relations and visibility of the physical objects that users interact with. In one of the scenarios of this project, users are instructed by a NAO robot to manipulate a number of Duplo-like animals on top of a printed background paper which serves as a landscape (See \ref{fig|l2torexample}). The robot instructions are based on pedagogical strategies to promote spatial relation learning by object manipulation. Such instructions include commands like to place the elephant \textit{on top} or \textit{next to} the cube or put the giraffe \textit{inside} the house.
+For that reason, the robot and the operator should be able to access whether the user performs the required task and at the same time envisage their perspective. A number of \uwds clients have been developed in order to provide a distributed model of the environment and the robot as described in the next section.
 
-i will finish this section later today
-...needs for spatial representation
 
 \subsection*{Architecture}
-The scenario consists of a number of \uwds clients that communicate with each other in order to provide an updated virtual representation to the operator. As seen in Figure \ref{fig|l2torexample}, the user manipulates the physical objects on top of an RFID mat as instructed by the NAO robot. 
-
-L2TOR \uwds clients:
-\subsubsection{Kinect Head Tracker}
-\subsubsection{Object RFID tracker}
-\subsubsection{NAO model}
-\subsubsection{Visibility computation}
-\subsubsection{Spatial Relations computation}
-\subsubsection{Game/Rules computation}
-
-
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{l2tor-timeline}
     \caption{Schema of the \uwds architecture used in L2TOR project pilot study. }
     \label{fig|l2torarchitecture}
 \end{figure}
-...diagram with the various \uwds clients
+
+The scenario consists of a number of \uwds clients distributed accross two computers that communicate with each other in order to provide an updated representation of the world. Figure \ref{fig|l2torarchitecture} illustrates the high level communication of the \uwds clients that form the achitecture of the L2TOR spatial relations platform.\\
+\\L2TOR \uwds clients:
+\subsubsection{Kinect Head Tracker} {Captures the location and the direction of the user's head - Camera point}
+\subsubsection{Object RFID tracker} {Updates the locations of the virtual objects based on RFID data}
+\subsubsection{NAO model}{Virtual representation of the Robot - Camera poit}
+\subsubsection{Visibility computation}{Computes visibility based on camera points}
+\subsubsection{Spatial Relations computation}{Extracts spatial relations between the virtual objects}
+\subsubsection{Game/Rules computation}{Interaction manager based on \uwds clients' input}
+
+The L2TOR project features an additional scenario where the user performs the manipulations on a tablet computer instead of using physical objects. To accomodate this change, we replaced the object detection \uwds client with a 3D virtual object detection while the rest of the system remains the same. Finally, we are evaluating the use of a hybrid platform that utilizes both virtual and physical objects at the same time. 
+
 
 \section{Conclusion}
 
