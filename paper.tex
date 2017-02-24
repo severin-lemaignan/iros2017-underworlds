@@ -193,7 +193,21 @@ to identify and localise objects, and Kinect-based skeleton tracking of humans,
 optionally assisted by motion capture to accurately track the head motion, which
 is required to compute what the human is looking at).
 
-\subsection{Relation to existing robotic middlewares}
+\subsection*{Relation to existing robotic middlewares}
+
+Like traditional robotic middlewares, \uwds offers a form of distributed
+computation based on message passing. However, it distinguishes itself from
+existing middleware in several significant ways.
+
+First and foremost, \uwds purposefully does not offer any \emph{general}
+capability at distributing computation and data flows amongst independent
+components: it focuses specifically on distributing environment models, both
+spatial (geometric models) and temporal (events and situations).
+
+While using standard middlewares as \emph{underlying transport} for \uwds would be
+technically feasible and relatively easy to implement, it does not offer any
+clear advantage over lighter and dedicated message passing libraries like ZeroMQ
+or gRPC (the later being the one used by \uwds).
 
 \section{Design and Architecture}
 
