@@ -97,32 +97,95 @@ Cascading Situation Assessment for Robots
 
 \uwds is a distributed and lightweight framework that enables robot programmers
 to build and refine in real-time spatial and temporal models of the environment
-surrounding a robot. \uwds makes it easy, then, to share these models amongst
-the other software components running on the robot, to eventually provide a
-distributed environment model for the robot.
+surrounding a robot. \uwds make it possible to share these world models amongst
+the software components running on the robot. Critically, \uwds permits to
+represent and manipulate in a distributed manner \emph{multiple alternatives} to
+the current, perceived world model: for instance, the world with some objects filtered out,
+the world `viewed' from the perspective of another agent, an hypothetical world
+resulting from the simulated application of a plan, etc.
 
-The components which require such spatial and temporal models of the environment
-are typically found in the intermediate layers of robotic architectures, between
+
+\subsection{Situation Assessment}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{overview}
+    \caption{Schema of a possible \uwds network: eight possible, user-written
+    \emph{clients} (in blue) are exchanging environment models through four shared
+    \emph{worlds} (made of joint spatial and temporal models). This architecture
+    enables successive and modular refinement of the models
+    (\emph{cascading} situation assessment), effectively adapted to each
+    client's needs (yellow nodes represent other possible components in the system that do not
+    interact directly with the \uwds network).}
+
+    \label{fig|scene}
+
+\end{figure}
+
+
+Anchoring perceptions in a symbolic model suitable for decision-making requires
+perception abilities and their symbolic interpretation. We call \emph{physical
+situation assessment} the cognitive skill that a robot exhibits when it
+represents and assesses the nature and content of its surroundings and monitors
+its evolution.
+
+Numerous approaches exist, like amodal (in the sense of modality-independent)
+\emph{proxies}~\cite{Jacobsson2008}, grounded amodal
+representations~\cite{Mavridis2006}, semantic
+maps~\cite{Nuechter2008, Galindo2008,Blodow2011} or affordance-based planning
+and object classification~\cite{Lorken2008, Varadarajan2011}.
+
+
+\uwds is specifically inspired by the geometric and temporal reasoning module
+{\sc Spark} (\emph{SPAtial Reasoning \& Knowledge}~\cite{sisbot2011situation}.
+{\sc Spark} acts as a situation assessment reasoner that generates symbolic
+knowledge from the geometry of the environment with respect to relations between
+objects, robots and humans. It also takes into account the different perspective
+that each agent has on the environment. {\sc Spark} embeds a
+modality-independent geometric model of the environment that serves both as
+basis for the fusion of the perception modalities and as bridge with the
+symbolic layer~\cite{lemaignan2016artificial}. This geometric model is built
+from 3D CAD models of the objects, furnitures and robots, and full body, rigged
+models of humans.  It is updated at run-time by the robot's sensors.
+Likewise, \uwds embeds a grounded amodal model of the environment, updated
+online from the robot's sensors (sensor fusion).
+
+However, {\sc Spark} is a monolithic module, that does not aim at sharing its
+internal 3D model to other external components. On the contrary, \uwds focuses
+on offering a shared and distributed representation within the robot's software
+architecture. Previous work on distributed scene graphs~\cite{naef2003blue} has
+been applied to robotics to provide a shared 3D representation of the robot's
+environment (like the \emph{Robot Scene Graph}~\cite{blumenthal2013scene} or 
+\emph{Deep State Representation}~\cite{bustos2016unified}).
+
+\uwds further extends this line of work by providing the ability to manipulate
+several \emph{alternative 3D worlds}, corresponding to filtered or hypothetical
+\emph{views} on the perceived model of the environment.
+
+
+\subsection{Representing Alternative States of the Environment}
+
+The components which make use of spatial and temporal models of the environment
+are usually found in the intermediate layers of robotic architectures, between
 the low-level perceptual layers, and the high-level decisional layers. They
-typically include geometric reasoners (that compute spatial and topological
-relations between objects), motion planners, gestures/sequence recognizers.
+include modules like geometric reasoners (that compute spatial and topological
+relations between objects), motion planners, action recognition.
 
-Difficulties however arise quickly. These different components might need
-different models, at different spatial and temporal resolutions. A 3D motion
-planner would typically use coarse 3D models of surrounding objects to lower the
-computational load while planning, while a spatial reasoner might need on the
-contrary a high-resolution model of the environment for accurate rendering when
-attempting to estimate the visibility of an object. Spatial models are also
-usually large as they might contain a lot of geometric data (including point
-clouds and meshes). Efficient sharing of such datasets is non-trivial,
-particularly when the said data are dynamically acquired (\eg in the case of
-map building or object recognition).
+These different components typically need different models, at different spatial
+and temporal resolutions. A 3D motion planner would typically use coarse 3D
+models of surrounding objects to lower the computational load while planning,
+while a spatial reasoner might need on the contrary a high-resolution model of
+the environment for accurate rendering when attempting to estimate the
+visibility of an object. Spatial models are also usually large as they might
+contain a lot of geometric data (including point clouds and meshes). Efficient
+sharing of such datasets is non-trivial, particularly when the said data are
+dynamically acquired (\eg in the case of map building or object recognition).
 
 Traditional robotic middlewares like ROS are not particularly well-suited to
 deal with these complexities: geometric data can be represented, but are not
 first-class citizens (basic tasks like displaying a 3D mesh at a dynamic
 position are non-trivial with ROS, for instance) and representing and reasoning
-on \emph{alternative states} of the environment is not directly doable.
+on \emph{alternative states} of the environment is not directly feasible.
 
 Representing \emph{alternative states} is actually often critical. For instance,
 software components manipulating environment models typically perform better if
@@ -148,54 +211,41 @@ system, where models are derived from each others, with partial modifications
 and different timescales.
 
 
-
-\subsection{Cascading Situation Assessment}
-
-Anchoring perceptions in a symbolic model requires perception abilities and
-their symbolic interpretation. We call \emph{physical situation assessment} the
-cognitive skill that a robot exhibits when it assesses the nature and content of its
-surroundings and monitors its evolution.
-
-Numerous approaches exist, like amodal (in the sense of modality-independent)
-\emph{proxies}~\cite{Jacobsson2008}, grounded amodal
-representations~\cite{Mavridis2006}, semantic
-maps~\cite{Nuechter2008, Galindo2008,Blodow2011} or affordance-based planning
-and object classification~\cite{Lorken2008, Varadarajan2011}.
-
 serving a scene from
 different viewpoints to compute visibility is not directly possible
 
+Relation to Beetz's \emph{deep representation}~\cite{beetz2010towards}
 
-\section{Related work}
+GSM (for \emph{Grounded Situation Model})~\cite{Mavridis2006} is a knowledge
+representation system primarily built to ``facilitate cross-modal
+interoperability'',  especially in the context of verbal interaction with a
+robot.
+
+GSM does not rely on any formal language but rather on a layered data structure
+(figure~\ref{fig|gsm}) that organises the surrounding world into agents and
+relations between agents.  Each agent (any animate or inanimate object) is
+attached to a physical model (made of \emph{body parts} that have properties
+like their position, color, etc.) and a mental model (which is a recursively
+embedded GSM, thus allowing a sort of theory of mind).
 
 
-\cite{sisbot2011situation}
-\cite{naef2003blue}
-\cite{bustos2016unified}
+Properties are represented in three layers: a stochastic representation, close
+to sensory percepts, a \emph{continuous single-valued} encoding of the
+stochastic model, and a discrete, categorical model.
 
-\uwds is inspired by geometric and temporal reasoning components like {\sc
-Spark} (\emph{SPAtial Reasoning \&
-Knowledge}~\cite{sisbot2011situation} (see~\cite{lemaignan2016artificial} for a
-high-level description of the integration of a component like {\sc Spark} in a
-complete robotic architecture).
+One notable feature of GSM is the \emph{bidirectionality} of the grounding
+process: not only sensor percepts are abstracted into categories suitable for
+human conversation, but human utterance (like ``There is a red ball in the
+center of the table'') can also be turned into property descriptions. This
+basically enable the knowledge representation system of the robot to
+\emph{imagine} entities.
 
-It acts as a situation assessment reasoner that generates symbolic knowledge from the
-geometry of the environment with respect to relations between objects, robots
-and humans, also
-taking into account the different perspective that each agent has on the
-environment.  {\sc Spark} embeds an \emph{amodal} (as defined by Mavridis and
-Roy in~\cite{Mavridis2006}: the different perceptual modalities are abstracted
-away into a blended spatial model) geometric model of the environment that
-serves both as basis for the fusion of the perception modalities and as bridge
-with the symbolic layer. This geometric model is built from 3D CAD models of the
-objects, furnitures and robots, and full body, rigged models of humans
-(Figure~\ref{fig:sparkScreenshot}).  It is updated at run-time by the robot's
-sensors (usually, a combination of vision-based tracking of 2D fiducial markers
-to identify and localise objects, and Kinect-based skeleton tracking of humans,
-optionally assisted by motion capture to accurately track the head motion, which
-is required to compute what the human is looking at).
+GSM also features several strategies for managing time and events.
+\emph{Moments} are created by storing timestamped snap-shots of GSM, and
+\emph{event classifiers} allow to define and detect events.
 
-\subsection*{Relation to existing robotic middlewares}
+
+\subsection{Relation to existing robotic middlewares}
 
 Like traditional robotic middlewares, \uwds offers a form of distributed
 computation based on message passing. However, it distinguishes itself from
@@ -221,20 +271,6 @@ have to be in the general case -- cycles are permitted) of \emph{clients}
 connected through shared data structures called \emph{worlds}.
 
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{overview}
-    \caption{Schema of a possible \uwds network: eight possible, user-written
-    \emph{clients} (in blue) are exchanging environment models through four shared
-    \emph{worlds} (made of joint spatial and temporal models). This architecture
-    enables successive and modular refinement of the models
-    (\emph{cascading} situation assessment), effectively adapted to each
-    client's needs (yellow nodes represent other possible components in the system that do not
-    interact directly with the \uwds network).}
-
-    \label{fig|scene}
-
-\end{figure}
 
 \subsubsection{Clients}
 
