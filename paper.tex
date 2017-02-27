@@ -346,6 +346,16 @@ snapshot is associated to the event, which allows clients to effectively retriev
 states of the world. This capability is thought to be primarly used by \uwds clients
 performing action recognition.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{uwds-screenshot}
+    \caption{Screenshot of the {\tt uwds view} 3D visualization and manipulation
+    tool. In this particular example, the 3D meshes have been pre-loaded using
+    {\tt uwds load}. Their positions are then updated at run time using the
+    robot's sensors and proprioception (joint state).}
+    \label{fig|uwds-view}
+\end{figure}
+
 \subsection{Distributed spatio-temporal models}
 \label{arch}
 
@@ -436,7 +446,7 @@ with underworlds.Context("walls_filter") as ctx:
 
 
 \end{pythoncode}
-    \caption{Example of a simple \uwds filter, written in Python, and named {\tt
+    \caption{Example of a simple yet complete \uwds filter, written in Python, and named {\tt
     walls\_filter}: the client connects to the \uwds network, walkthrough the
     scene graph of world {\tt example\_in}, filter out some objects, and publish
     the remaining objects in the world {\tt example\_out}.}
@@ -447,7 +457,7 @@ with underworlds.Context("walls_filter") as ctx:
 \subsection{Standard Clients}
 \label{std_clients}
 
-\subsubsection{3D Visualization}
+\subsubsection{3D Visualization and manipulation}
 
 Interestingly, while \uwds deals with 3D geometries and scenes, it does
 represent 3D entities purely as data structures: no visual representation is
@@ -457,29 +467,31 @@ to visualize the content of a scene is desirable. \uwds provides a standard
 client, {\tt uwds view}, that performs real-time 3D rendering of the scene,
 using OpenGL (Figure~\ref{fig|uwds-view}).
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.9\linewidth]{uwds-screenshot}
-    \caption{Screenshot of the {\tt uwds view} 3D visualization and manipulation
-    tool.}
-    \label{fig|uwds-view}
-\end{figure}
-
 This tool also support basic object manipulations, that are broadcasted to the
 other \uwds clients as expected.
 
-\subsubsection{Assets loading}
+\paragraph{Assets loading}
 
 {\tt uwds load}
 
 \subsubsection{Introspection and debugging}
 
-{\tt uwds ls}
-{\tt uwds show}
+\uwds provides a range of tools to inspect a running the network. Graphical
+tools ({\tt uwds explorer} and {\tt uwds timeline}, see Figure~\ref{fig|explorer})
+provide an user-friendly overview of the system's graph with the connections
+between the clients and the worlds as well as their activity.
 
-{\tt uwds explorer}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{tools}
+    \caption{Screenshots of the timeline (top) and network (bottom)
+    introspection tools. Worlds are represented as boxes, clients as ellipses.}
+    \label{fig|explorer}
+\end{figure}
 
-%%TODO add screenshot of uwds explorer
+Specialized command-line tools are also available to list at run-time the worlds
+and their content ({\tt uwds ls}) or to display detailed informations on a
+specific node ({\tt uwds show}).
 
 \subsubsection{Interface with ROS}
 
@@ -520,6 +532,57 @@ integrated in a robot which computes symbolic positions of objects.
 
 \subsubsection{Perspective Taking}
 
+\begin{listing}[h!]
+\begin{pythoncode}
+import copy
+import underworlds
+from underworlds.tools.visibility import VisibilityMonitor
+
+with underworlds.Context("Human PoV") as ctx:
+
+    source = ctx.worlds["base"]
+    target = ctx.worlds["human_perspective"]
+
+    # pick up the first node named 'human'
+    human = source.scene.nodebyname("human")[0]
+    target.scene.nodes.append(human)
+
+    # VisibilityMonitor computes the set of visible 
+    # nodes from a given viewpoint
+    visibility = VisibilityMonitor(ctx, source)
+
+    node_mapping = {}
+
+    while True:
+
+        for node in visibility.from_camera(human):
+
+            newnode = node.copy()
+
+            # track the correspondence between nodes
+            # in source and target scenes
+            if node in node_mapping:
+                newnode.id = node_mapping[node].id
+            else:
+                node_mapping[node] = newnode
+
+            # reparent the nodes to the new root
+            if node.parent == source.scene.rootnode.id:
+                newnode.parent = target.scene.rootnode.id
+
+            target.scene.nodes.update(newnode)
+
+        source.scene.waitforchanges()
+
+\end{pythoncode}
+    \caption{This \uwds client creates a world named {\tt human\_perspective}
+    from a source world {\tt base} by only updating objects that are in the
+    human field of view. As such, {\tt human\_perspective} is a real-time model
+    of the human perspective on the scene.}
+    
+    \label{lst|humanperspective} \end{listing}
+
+
 
 \section{Application Example}
 
@@ -536,7 +599,7 @@ For that reason, the robot and the operator should be able to access whether the
 \subsection*{Architecture}
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{l2tor-timeline}
+    \includegraphics[width=\linewidth]{l2tor}
     \caption{Schema of the \uwds architecture used in L2TOR project pilot study. }
     \label{fig|l2torarchitecture}
 \end{figure}
@@ -558,9 +621,14 @@ The L2TOR project features an additional scenario where the user performs the ma
 \subsection{Future work}
 \label{futurework}
 
+Representation of uncertainty
+
 Representation of fields
 
 Client libraries in more languages
+
+
+Interplay with effort like RSG-DSL~\cite{blumenthal2014towards}
 
 \section*{Acknowledgment}
 
