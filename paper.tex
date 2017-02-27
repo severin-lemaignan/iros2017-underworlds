@@ -111,8 +111,8 @@ resulting from the simulated application of a plan, etc.
     \centering
     \includegraphics[width=\linewidth]{overview}
     \caption{Schema of a possible \uwds network: eight possible, user-written
-    \emph{clients} (in blue) are exchanging environment models through four shared
-    \emph{worlds} (made of joint spatial and temporal models). This architecture
+    \emph{clients} (in blue) are sharing environment models through four
+    independent \emph{worlds} (made of joint spatial and temporal models). This architecture
     enables successive and modular refinement of the models
     (\emph{cascading} situation assessment), effectively adapted to each
     client's needs (yellow nodes represent other possible components in the system that do not
@@ -150,13 +150,13 @@ models of humans.  It is updated at run-time by the robot's sensors.
 Likewise, \uwds embeds a grounded amodal model of the environment, updated
 online from the robot's sensors (sensor fusion).
 
-However, {\sc Spark} is a monolithic module, that does not aim at sharing its
+However, {\sc Spark} is a monolithic module, that does not support sharing its
 internal 3D model to other external components. On the contrary, \uwds focuses
 on offering a shared and distributed representation within the robot's software
 architecture. Previous work on distributed scene graphs~\cite{naef2003blue} has
 been applied to robotics to provide a shared 3D representation of the robot's
 environment (like the \emph{Robot Scene Graph}~\cite{blumenthal2013scene} or 
-\emph{Deep State Representation}~\cite{bustos2016unified}).
+\emph{Deep State Representation}~\cite{bustos2016unified} approaches).
 
 \uwds further extends this line of work by providing the ability to manipulate
 several \emph{alternative 3D worlds}, corresponding to filtered or hypothetical
@@ -171,29 +171,33 @@ the low-level perceptual layers, and the high-level decisional layers. They
 include modules like geometric reasoners (that compute spatial and topological
 relations between objects), motion planners, action recognition.
 
-These different components typically need different models, at different spatial
-and temporal resolutions. A 3D motion planner would typically use coarse 3D
-models of surrounding objects to lower the computational load while planning,
-while a spatial reasoner might need on the contrary a high-resolution model of
-the environment for accurate rendering when attempting to estimate the
-visibility of an object. Spatial models are also usually large as they might
-contain a lot of geometric data (including point clouds and meshes). Efficient
-sharing of such datasets is non-trivial, particularly when the said data are
-dynamically acquired (\eg in the case of map building or object recognition).
+These different components typically exhibit different needs in terms of model,
+like different nominal spatial and/or temporal resolutions. For instance, a 3D
+motion planner would typically use coarse 3D models of surrounding objects to
+lower the computational load while planning, while a module assessing the
+visibility of objects might need on the contrary a high-resolution model of the
+environment for accurate 3D rendering. This requirement of multiple
+task-specific representations has been framed as the need for \emph{deep
+representation} by Beetz~\cite{beetz2010towards}.
+
+%Spatial models are also usually large as they might
+%contain a lot of geometric data (including point clouds and meshes). Efficient
+%real-time sharing of such datasets is non-trivial, particularly when the said
+%data is changing (\eg in the case of map building or object recognition).
 
 Traditional robotic middlewares like ROS are not particularly well-suited to
-deal with these complexities: geometric data can be represented, but are not
-first-class citizens (basic tasks like displaying a 3D mesh at a dynamic
-position are non-trivial with ROS, for instance) and representing and reasoning
-on \emph{alternative states} of the environment is not directly feasible.
+deal with these different needs: full geometric data can be represented, but are not
+first-class citizens (for instance, basic tasks like displaying a 3D mesh at a dynamic
+position are not particularly easy with ROS) and critically, representing and reasoning
+on alternative models of the environment is not directly feasible.
 
-Representing \emph{alternative states} is actually often critical. For instance,
+Representing \emph{alternative states} is however often highly desirable. For instance,
 software components manipulating environment models typically perform better if
 the models are physically consistent. However, low-level perception inaccuracies
-at the sensor level often introduce hard-to-avoid physical inconsistencies (like
+often introduce hard-to-avoid physical inconsistencies (like
 detected objects floating in the air, or on the contrary wrongly inset into
 other objects). Therefore, a post-process stage (for instance, using a physics
-simulation engine) might be desired to move the objects seen
+simulation engine) might be needed to displace the objects seen
 by the robot into physically-correct positions. Implemented with a classical
 approach (for instance, using ROS TF frames), we would get an object {\tt book}
 located at the frame {\tt book\_frame}, and a secondary frame {\tt
@@ -210,39 +214,34 @@ simulation). This use-case evidences the need for a flexible representation
 system, where models are derived from each others, with partial modifications
 and different timescales.
 
+A third example relates to human-robot interaction scenarios where \emph{perspective
+taking} is important (a prototypical example being the game `I spy with my
+little eyes', as implemented in~\cite{ros2010which}). Perspective taking is a
+cognitive skill that relies on the ability for an agent to project itself in
+others' `eyes' to estimate what they see from their perspective. While
+perspective taking has been previously implemented in robotics by temporary placing
+virtual cameras at eyes position for each of the humans tracked by the
+robot~\cite{ros2010solving}. a the face of  swapping the different viewpoints
+to compute visibility is not directly possible
 
-serving a scene from
-different viewpoints to compute visibility is not directly possible
+Geometric \emph{pre-supposition accommodation} makes another interesting case
+for alternative worlds representation. \emph{Pre-supposition accommodation}
+comes originally from linguistics, where it describes the mechanism by which
+\emph{context is adjusted [...] to accept [...] a sentence that imposes certain
+requirements on the context in which it is
+processed}~\cite{vonfintel2008presupposition}. In the context of spatio-temporal
+representations, we call pre-supposition accommodation the ability for an agent
+to adjust its model so that it matches some external contextual constraint. For
+instance, if A tells B to ``catch the red balloon behind you'', B adds a
+representation of a red balloon behind him, even without actually seeing the
+balloon: B accommodates the pre-supposition of a red balloon being present
+behind himself. Endowing robots with this capability has been touched by
+Mavridis \etal within their multi-modal \emph{Grounded Situation
+Model}~\cite{Mavridis2006}. However, to the best of our knowledge, a general
+framework which would enable robots to derive imaginary worlds by extending of
+modifying existing ones has not been proposed so far.
 
-Relation to Beetz's \emph{deep representation}~\cite{beetz2010towards}
 
-GSM (for \emph{Grounded Situation Model})~\cite{Mavridis2006} is a knowledge
-representation system primarily built to ``facilitate cross-modal
-interoperability'',  especially in the context of verbal interaction with a
-robot.
-
-GSM does not rely on any formal language but rather on a layered data structure
-(figure~\ref{fig|gsm}) that organises the surrounding world into agents and
-relations between agents.  Each agent (any animate or inanimate object) is
-attached to a physical model (made of \emph{body parts} that have properties
-like their position, color, etc.) and a mental model (which is a recursively
-embedded GSM, thus allowing a sort of theory of mind).
-
-
-Properties are represented in three layers: a stochastic representation, close
-to sensory percepts, a \emph{continuous single-valued} encoding of the
-stochastic model, and a discrete, categorical model.
-
-One notable feature of GSM is the \emph{bidirectionality} of the grounding
-process: not only sensor percepts are abstracted into categories suitable for
-human conversation, but human utterance (like ``There is a red ball in the
-center of the table'') can also be turned into property descriptions. This
-basically enable the knowledge representation system of the robot to
-\emph{imagine} entities.
-
-GSM also features several strategies for managing time and events.
-\emph{Moments} are created by storing timestamped snap-shots of GSM, and
-\emph{event classifiers} allow to define and detect events.
 
 
 \subsection{Relation to existing robotic middlewares}
