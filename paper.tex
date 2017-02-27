@@ -95,14 +95,16 @@ Cascading Situation Assessment for Robots
 \section{Introduction}
 
 
-\uwds is a distributed and lightweight framework that enables robot programmers
-to build and refine in real-time spatial and temporal models of the environment
-surrounding a robot. \uwds make it possible to share these world models amongst
-the software components running on the robot. Critically, \uwds permits to
-represent and manipulate in a distributed manner \emph{multiple alternatives} to
-the current, perceived world model: for instance, the world with some objects filtered out,
-the world `viewed' from the perspective of another agent, an hypothetical world
-resulting from the simulated application of a plan, etc.
+\uwds is a distributed and lightweight open-source
+framework\footnote{\url{https://github.com/severin-lemaignan/underworlds}} that
+enables robot programmers to build and refine in real-time spatial and temporal
+models of the environment surrounding a robot. \uwds make it possible to share
+these world models amongst the software components running on the robot.
+Critically, \uwds permits to represent and manipulate in a distributed manner
+\emph{multiple alternatives} to the current, perceived world model: for
+instance, the world with some objects filtered out, the world `viewed' from the
+perspective of another agent, an hypothetical world resulting from the simulated
+application of a plan, etc.
 
 
 \subsection{Situation Assessment}
@@ -394,7 +396,7 @@ full data whenever they actually need it.
 \label{api}
 
 As mentioned in section~\ref{arch}, \uwds uses Google's gRPC as message passing
-protocol. The protocol is explicitely defined (using the \emph{protocol
+protocol. The protocol is explicitly defined (using the \emph{protocol
 buffers}\footnote{\url{https://developers.google.com/protocol-buffers/}}
 interface definition language), and bindings to various languages
 and platforms can be automatically generated from the protocol definition file
@@ -442,7 +444,7 @@ with underworlds.Context("walls_filter") as ctx:
 
 \end{pythoncode}
     \caption{Example of a simple yet complete \uwds filter, written in Python, and named {\tt
-    walls\_filter}: the client connects to the \uwds network, walkthrough the
+    walls\_filter}: the client connects to the \uwds network, walk through the
     scene graph of world {\tt example\_in}, filter out some objects, and publish
     the remaining objects in the world {\tt example\_out}.}
     
@@ -609,9 +611,9 @@ with underworlds.Context("Human PoV") as ctx:
     human\_perspective} from a source world {\tt base} by only updating objects
     that are in the field of view of the human. As such, {\tt human\_perspective} is
     a real-time model of the human perspective on the scene.}
-    
-    \label{lst|humanperspective} \end{listing}
 
+    \label{lst|humanperspective}
+\end{listing}
 
 
 \section{Application Example}
@@ -619,11 +621,26 @@ with underworlds.Context("Human PoV") as ctx:
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{l2tor-photo2}
-    \caption{A user manipulating objects on RFID mat while an operator monitors the interaction via an {\tt uwds view} client}
+    \caption{A user manipulating objects on RFID mat while an operator monitors
+    the interaction via an {\tt uwds view} client}
+
     \label{fig|l2torexample}
 \end{figure}
-\uwds has been used within the European L2TOR project~\cite{belpaeme2015l2tor} in order to conceptualize and visualize the spatial relations and visibility of the physical objects that users interact with. In one of the scenarios of this project, users are instructed by a NAO robot to manipulate a number of Duplo-like animals on top of a printed background paper which serves as a landscape (See \ref{fig|l2torexample}). The robot instructions are based on pedagogical strategies to promote spatial relation learning by object manipulation. Such instructions include commands like to place the elephant \textit{on top} or \textit{next to} the cube or put the giraffe \textit{inside} the house.
-For that reason, the robot and the operator should be able to access whether the user performs the required task and at the same time envisage their perspective. A number of \uwds clients have been developed in order to provide a distributed model of the environment and the robot as described in the next section.
+
+\uwds has been used within the European L2TOR project~\cite{belpaeme2015l2tor}
+in order to conceptualize and visualize the spatial relations and visibility of
+the physical objects that users interact with. In one of the scenarios of this
+project, users are instructed by a NAO robot to manipulate a number of
+Duplo-like animals on top of a printed background paper which serves as a
+landscape (See \ref{fig|l2torexample}). The robot instructions are based on
+pedagogical strategies to promote spatial relation learning by object
+manipulation. Such instructions include commands like to place the elephant
+\textit{on top} or \textit{next to} the cube or put the giraffe \textit{inside}
+the house.  For that reason, the robot and the operator should be able to access
+whether the user performs the required task and at the same time envisage their
+perspective. A number of \uwds clients have been developed in order to provide a
+distributed model of the environment and the robot as described in the next
+section.
 
 
 \subsection*{Architecture}
@@ -634,16 +651,40 @@ For that reason, the robot and the operator should be able to access whether the
     \label{fig|l2torarchitecture}
 \end{figure}
 
-The scenario consists of a number of \uwds clients distributed accross two computers that communicate with each other in order to provide an updated representation of the world. Figure \ref{fig|l2torarchitecture} illustrates the high level communication of the \uwds clients that form the achitecture of the L2TOR spatial relations platform.\\
-\\L2TOR \uwds clients:
-\subsubsection{Kinect Head Tracker} {Captures the location and the direction of the user's head - Camera point}
-\subsubsection{Object RFID tracker} {Updates the locations of the virtual objects based on RFID data}
-\subsubsection{NAO model}{Virtual representation of the Robot - Camera poit}
-\subsubsection{Visibility computation}{Computes visibility based on camera points}
-\subsubsection{Spatial Relations computation}{Extracts spatial relations between the virtual objects}
-\subsubsection{Game/Rules computation}{Interaction manager based on \uwds clients' input}
+The scenario consists of a number of \uwds clients distributed across two
+computers that communicate with each other in order to provide an updated
+representation of the world. Figure \ref{fig|l2torarchitecture} illustrates the
+high level communication of the \uwds clients that form the architecture of the
+L2TOR spatial relations platform.
 
-The L2TOR project features an additional scenario where the user performs the manipulations on a tablet computer instead of using physical objects. To accomodate this change, we replaced the object detection \uwds client with a 3D virtual object detection while the rest of the system remains the same. Finally, we are evaluating the use of a hybrid platform that utilizes both virtual and physical objects at the same time. 
+L2TOR \uwds clients:
+
+\begin{itemize}
+    \item \textbf{Kinect Head Tracker} Captures the location and the direction
+        of the user's head - Camera point
+
+    \item \textbf{Object RFID tracker} Updates the locations of the virtual
+        objects based on RFID data
+
+    \item \textbf{NAO model} Virtual representation of the Robot - Camera poit
+
+    \item \textbf{Visibility computation} Computes visibility based on camera
+        points
+
+    \item \textbf{Spatial Relations computation} Extracts spatial relations
+        between the virtual objects
+
+    \item \textbf{Game/Rules computation} Interaction manager based on \uwds
+        clients' input
+
+\end{itemize}
+
+The L2TOR project features an additional scenario where the user performs the
+manipulations on a tablet computer instead of using physical objects. To
+accommodate this change, we replaced the object detection \uwds client with a 3D
+virtual object detection while the rest of the system remains the same. Finally,
+we are evaluating the use of a hybrid platform that utilizes both virtual and
+physical objects at the same time. 
 
 
 \section{Discussion and Conclusion}
@@ -675,6 +716,21 @@ Client libraries in more languages
 
 
 \subsection{Conclusion}
+
+We have introduced \uwds, a novel framework for shared and composable
+spatio-temporal representations of a robot's world. The key contributions of our
+approach are: a composite data-structure for environment representation within a
+robotic software architecture, made of a scene graph and a timeline; a mechanism
+to efficiently and transparently share this data-structure amongst a set of
+clients (the software modules of the robot); a cascading architecture permitting
+the explicit of representation of alternative states of the world while
+maintaining a network of dependencies amongst themselves; a typology of clients
+(\emph{root}, \emph{leaf}, \emph{filter}, \emph{transformer}) to systematically
+describe such a network of representations dependencies.
+
+We have presented as well a concrete instantiation of a system relying on \uwds
+for its representation needs, and we have sketched future directions of
+development.
 
 Integration with effort like RSG-DSL~\cite{blumenthal2014towards}
 
