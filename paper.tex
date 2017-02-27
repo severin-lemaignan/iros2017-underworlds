@@ -174,16 +174,16 @@ The components which make use of spatial and temporal models of the environment
 are usually found in the intermediate layers of robotic architectures, between
 the low-level perceptual layers, and the high-level decisional layers. They
 include modules like geometric reasoners (that compute spatial and topological
-relations between objects), motion planners, action recognition.
+relations between objects), motion planners or action recognition modules.
 
-These different components typically exhibit different needs in terms of model,
+These components exhibit different needs in terms of model,
 like different nominal spatial and/or temporal resolutions. For instance, a 3D
 motion planner would typically use coarse 3D models of surrounding objects to
 lower the computational load while planning, while a module assessing the
-visibility of objects might need on the contrary a high-resolution model of the
-environment for accurate 3D rendering. This requirement of multiple
+visibility of objects might need on the contrary  high-resolution models 
+for accurate 3D rendering. This requirement of multiple
 task-specific representations has been framed as the need for \emph{deep
-representation} by Beetz~\cite{beetz2010towards}.
+representations} by Beetz~\cite{beetz2010towards}.
 
 %Spatial models are also usually large as they might
 %contain a lot of geometric data (including point clouds and meshes). Efficient
@@ -191,67 +191,70 @@ representation} by Beetz~\cite{beetz2010towards}.
 %data is changing (\eg in the case of map building or object recognition).
 
 Traditional robotic middlewares like ROS are not particularly well-suited to
-deal with these different needs: full geometric data can be represented, but are not
-first-class citizens (for instance, basic tasks like displaying a 3D mesh at a dynamic
-position are not particularly easy with ROS) and critically, representing and reasoning
-on alternative models of the environment is not directly feasible.
+deal with these different needs: full geometric data can be represented, but are
+not first-class citizens (basic tasks like displaying a 3D mesh at a dynamic
+position are not particularly easy to perform with ROS) and critically,
+representing and reasoning on alternative states of the environment is not
+directly feasible.
 
-Representing \emph{alternative states} is however often highly desirable. For instance,
+Representing alternative states is however often highly desirable. For instance,
 software components manipulating environment models typically perform better if
 the models are physically consistent. However, low-level perception inaccuracies
-often introduce hard-to-avoid physical inconsistencies (like
-detected objects floating in the air, or on the contrary wrongly inset into
-other objects). Therefore, a post-process stage (for instance, using a physics
-simulation engine) might be needed to displace the objects seen
-by the robot into physically-correct positions. Implemented with a classical
-approach (for instance, using ROS TF frames), we would get an object {\tt book}
-located at the frame {\tt book\_frame}, and a secondary frame {\tt
-book\_frame\_corrected} computed by the physics engine. It is easy to see why
-such an approach would be quickly confusing (where is in fact my book?) and would not
-scale well, with the robot's 3D model cluttered with spurious frames.
+often introduce hard-to-avoid physical inconsistencies (like detected objects
+floating in the air, or on the contrary wrongly inset into other objects).
+Therefore, a post-process stage (for instance, using a physics simulation
+engine) is needed to displace the objects seen by the robot into
+physically-correct positions. Implemented with a classical approach (for
+instance, using ROS TF frames), we would represent an object {\tt book} with two
+frames: the original frame (\eg {\tt book\_frame\_raw}) and a second one
+computed by the physics engine (\eg {\tt book\_frame\_corrected}). Such an
+approach leads to the robot's 3D model being cluttered with multiple frames and
+does not scale well.
 
-Another relevant example pertains to geometric task planning: a geometric task
-planner typically need to reason over hypothetical future states of the
-environment (``what happen if I move this glass onto that pile of books?'').
-The planner might want to quickly generate possible future states, that
-themselves might require further processing (for instance, running a physics
-simulation). This use-case evidences the need for a flexible representation
-system, where models are derived from each others, with partial modifications
-and different timescales.
+Another example pertains to geometric task planning: a geometric task planner
+typically needs to reason over hypothetical future states of the environment
+(``what happen if I move this glass onto that pile of books?'').  The planner
+generates many possible future states, that themselves might require further
+processing (for instance, running a physics simulation). Such a tool would
+benefit a flexible representation system, where models are derived from each
+others, with partial modifications and different timescales.
 
 A third example relates to human-robot interaction scenarios where \emph{perspective
 taking} is important (a prototypical example being the game `I spy with my
 little eyes', as implemented in~\cite{ros2010which}). Perspective taking is a
 cognitive skill that relies on the ability for an agent to project itself in
-others' `eyes' to estimate what they see from their perspective. While
-perspective taking has been previously implemented in robotics by temporary placing
+others' `eyes' to estimate what they see from their perspectives. 
+Perspective taking has been previously implemented in robotics by temporary placing
 virtual cameras at eyes position for each of the humans tracked by the
-robot~\cite{ros2010solving}. a the face of  swapping the different viewpoints
-to compute visibility is not directly possible
+robot~\cite{ros2010solving}. While acceptable for simple cases, such an approach
+does not permit to maintain truly independent models of the environment for each
+agent, and in particular does not permit false-beliefs
+modelling~\cite{lemaignan2015mutual} whereas separate, independent world models
+would effectively support such a skill.
 
-Geometric \emph{pre-supposition accommodation} makes another interesting case
-for alternative worlds representation. \emph{Pre-supposition accommodation}
+Lastly, geometric \emph{pre-supposition accommodation} makes another interesting
+case for alternative worlds representation. \emph{Pre-supposition accommodation}
 comes originally from linguistics, where it describes the mechanism by which
 \emph{context is adjusted [...] to accept [...] a sentence that imposes certain
 requirements on the context in which it is
 processed}~\cite{vonfintel2008presupposition}. In the context of spatio-temporal
 representations, we call pre-supposition accommodation the ability for an agent
-to adjust its model so that it matches some external contextual constraint. For
-instance, if A tells B to ``catch the red balloon behind you'', B adds a
-representation of a red balloon behind him, even without actually seeing the
-balloon: B accommodates the pre-supposition of a red balloon being present
-behind himself. Endowing robots with this capability has been touched by
-Mavridis \etal within their multi-modal \emph{Grounded Situation
-Model}~\cite{Mavridis2006}. However, to the best of our knowledge, a general
-framework which would enable robots to derive imaginary worlds by extending of
-modifying existing ones has not been proposed so far.
+to adjust its model so that it matches some contextual constraint. For instance,
+if A tells B to ``catch the red balloon behind you'', B might create a
+representation of an imaginary red balloon, placed behind him, even without
+actually observing the balloon: B \emph{accommodates} the \emph{pre-supposition}
+of a red balloon being present behind himself. Endowing robots with this
+capability has been touched by Mavridis \etal within their multi-modal
+\emph{Grounded Situation Model}~\cite{Mavridis2006}. However, to the best of our
+knowledge, a general framework which would enable robots to accommodate spatial
+and temporal pre-suppositions by deriving imaginary worlds from existing ones
+has not been proposed so far.
 
-
-The main contribution of this work is a generic approach to represent and share
-\textbf{multiple parallel representations of the world}. \uwds does so by
-permitting clients to clone an existing world, modify it, and re-share it,
-without the cost of duplicating geometric data (as explained in
-section~\ref{design}). By organizing clients in a network
+\uwds addresses this need and the main contribution of this work is a generic
+approach to \textbf{represent and share multiple parallel representations of the
+world}. \uwds does so by permitting clients to clone existing worlds, modify
+them, and re-share them, without the cost of duplicating geometric data (as
+explained in section~\ref{design}). By organizing clients in a network
 (Figure~\ref{fig|scene}), worlds can be made dependent on each other, resulting
 in a loosely-coupled modular approach to spatio-temporal world representation
 that we call \emph{cascading situation assessment}.
