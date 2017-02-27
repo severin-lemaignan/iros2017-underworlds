@@ -242,25 +242,18 @@ framework which would enable robots to derive imaginary worlds by extending of
 modifying existing ones has not been proposed so far.
 
 
+The main contribution of this work is a generic approach to represent and share
+\textbf{multiple parallel representations of the world}. \uwds does so by
+permitting clients to clone an existing world, modify it, and re-share it,
+without the cost of duplicating geometric data (as explained in
+section~\ref{design}). By organizing clients in a network
+(Figure~\ref{fig|scene}), worlds can be made dependent on each other, resulting
+in a loosely-coupled modular approach to spatio-temporal world representation
+that we call \emph{cascading situation assessment}.
 
-
-\subsection{Relation to existing robotic middlewares}
-
-Like traditional robotic middlewares, \uwds offers a form of distributed
-computation based on message passing. However, it distinguishes itself from
-existing middleware in several significant ways.
-
-First and foremost, \uwds purposefully does not offer any \emph{general}
-capability at distributing computation and data flows amongst independent
-components: it focuses specifically on distributing environment models, both
-spatial (geometric models) and temporal (events and situations).
-
-While using standard middlewares as \emph{underlying transport} for \uwds would be
-technically feasible and relatively easy to implement, it does not offer any
-clear advantage over lighter and dedicated message passing libraries like ZeroMQ
-or gRPC (the later being the one used by \uwds).
 
 \section{Design and Architecture}
+\label{design}
 
 \subsection{Cascading architecture}
 
@@ -268,8 +261,6 @@ Figure~\ref{fig|scene} pictures a typically \uwds topology: a graph (that
 happens to be a directed acyclic graph on Figure~\ref{fig|scene}, but does not
 have to be in the general case -- cycles are permitted) of \emph{clients}
 connected through shared data structures called \emph{worlds}.
-
-
 
 \subsubsection{Clients}
 
@@ -330,7 +321,11 @@ etc. -- note that fields are not yet implemented in the current version of
 
 Every node has a unique ID, a parent, a 3D transformation relative to the parent
 and an optional name. \emph{Object} nodes optionally store as well pointers to their
-associated meshes.
+associated meshes. Importantly, mesh data (or other geometric datasets like
+point clouds) are \emph{not} stored within the nodes. \uwds represents geometric
+data as immutable data, labelled with their hash (preventing data duplication).
+Nodes only store the hash of their geometric data, and the actual data is pulled
+by client whenever they actually need it (for rendering for instance).
 
 \subsubsection{Timelines}
 
@@ -470,9 +465,26 @@ using OpenGL (Figure~\ref{fig|uwds-view}).
 This tool also support basic object manipulations, that are broadcasted to the
 other \uwds clients as expected.
 
-\paragraph{Assets loading}
+\paragraph*{Assets loading}
 
-{\tt uwds load}
+Geometric data like meshes can be loaded into a world (or rather, into the whole
+network as geometric data are treated as immutable resources shared amongst all
+worlds) by simply sending an array of vertices and faces to the \uwds server.
+As such, any client can load 3D data that is automatically made available to the
+whole network. For example, an object recognition module recognizes a new
+object. It sends the mesh to the \uwds server and creates a new node which
+references the mesh. At the next frame update, the 3D viewer sees a new node
+referencing a yet unknown mesh. The viewer request the mesh data from the
+server, stores it internally (\eg as an OpenGL buffer), and renders it. Whenever
+the node transformation is updated, the 3D viewer can re-render it without
+having to download the mesh from the server again.
+
+Often, objects manipulated by the robot have known meshes with corresponding CAD
+models. In these case, \uwds provides a tool, {\tt uwds load}, that loads a mesh
+into a \uwds network (and optionally, creates a node) from a large range of 3D
+format\footnote{The underlying import capability is provided by the {\sc assimp}
+library.  \url{http://assimp.sourceforge.net/}} (including Collada, FBX, OBJ,
+Blender).
 
 \subsubsection{Introspection and debugging}
 
@@ -508,29 +520,47 @@ subset of the TF tree into \uwds.
 Currently, the process is unidirectional: the {\tt uwds tf} client performs TF
 to \uwds updates, but not the opposite.
 
-\subsection{Spatial Reasoning}
+\subsection{Spatial Reasoning and Perspective Taking}
 
 Spatial reasoning~\cite{O'Keefe1999} is a field in its own right, and has been
 used for natural language processing for applications such as direction
-recognition ~\cite{Kollar2010,Matuszek2010} or language
-grounding~\cite{Tellex2010}.~\cite{Skubic2004} present a spatial reasoner
-integrated in a robot which computes symbolic positions of objects.
+recognition~\cite{Kollar2010,Matuszek2010} or language
+grounding~\cite{Tellex2010}. Other examples in human-robot interaction include Ros
+\etal~\cite{ros2010solving, ros2010which} which has been recently integrated
+into a full architecture for autonomous human-robot
+interaction~\cite{lemaignan2016artificial}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.9\linewidth]{spatialrelations}
+    \includegraphics[width=\linewidth]{spatialrelations}
     \caption{The {\tt spatial\_relations} client computes perspective-aware
-    spatial relations between objects and agents}
+    spatial relations between objects and agents: \emph{allo-centric} relations (like
+    {\tt is in} or {\tt is on}) are independent of the viewpoint, while
+    \emph{ego-centric} relations ({\tt in front of}, {\tt left of}) depend on
+    the viewer perspective.}
     \label{fig|spatialrelations}
 \end{figure}
 
-\cite{Ros2010}
+\uwds provides a client ({\tt spatial\_relations}) to compute both
+allo-centric and ego-centric (\ie viewer-dependent) spatial relations
+between objects (Figure~\ref{fig|spatialrelations}).
 
-\subsubsection{Visibility computation}
 
-{\tt uwds visibility}
+\uwds also implement an efficient algorithm to assess object visibility from a
+specific viewpoint (\ie from a given \emph{camera} node). The algorithm (color
+picking) enables fast (single pass) computation of the visibility of every
+object in the scene, while providing control regarding how much of an object
+should be actually visible to be considered as globally visible. The
+command-line tool {\tt uwds visibility} returns the list of visible objects from
+the point of view of every camera in a given world, and \uwds also provides the
+helper class {\tt VisibilityMonitor} to programmatically access visibility
+information.
 
-\subsubsection{Perspective Taking}
+When integrated into a filter node, visibility computation enables to easily
+create new worlds representing the estimated perspectives of the different
+agents. Listing~\ref{lst|humanperspective} provides the complete code of such an
+\uwds client.
+
 
 \begin{listing}[h!]
 \begin{pythoncode}
@@ -575,10 +605,10 @@ with underworlds.Context("Human PoV") as ctx:
         source.scene.waitforchanges()
 
 \end{pythoncode}
-    \caption{This \uwds client creates a world named {\tt human\_perspective}
-    from a source world {\tt base} by only updating objects that are in the
-    human field of view. As such, {\tt human\_perspective} is a real-time model
-    of the human perspective on the scene.}
+    \caption{Example of an \uwds client that creates a world named {\tt
+    human\_perspective} from a source world {\tt base} by only updating objects
+    that are in the field of view of the human. As such, {\tt human\_perspective} is
+    a real-time model of the human perspective on the scene.}
     
     \label{lst|humanperspective} \end{listing}
 
@@ -616,7 +646,23 @@ The scenario consists of a number of \uwds clients distributed accross two compu
 The L2TOR project features an additional scenario where the user performs the manipulations on a tablet computer instead of using physical objects. To accomodate this change, we replaced the object detection \uwds client with a 3D virtual object detection while the rest of the system remains the same. Finally, we are evaluating the use of a hybrid platform that utilizes both virtual and physical objects at the same time. 
 
 
-\section{Conclusion}
+\section{Discussion and Conclusion}
+
+\subsection{Relation to existing robotic middlewares}
+
+Like traditional robotic middlewares, \uwds offers a form of distributed
+computation based on message passing. However, it distinguishes itself from
+existing middleware in several significant ways.
+
+First and foremost, \uwds purposefully does not offer any \emph{general}
+capability at distributing computation and data flows amongst independent
+components: it focuses specifically on distributing environment models, both
+spatial (geometric models) and temporal (events and situations).
+
+While using standard middlewares as \emph{underlying transport} for \uwds would be
+technically feasible and relatively easy to implement, it does not offer any
+clear advantage over lighter and dedicated message passing libraries like ZeroMQ
+or gRPC (the later being the one used by \uwds).
 
 \subsection{Future work}
 \label{futurework}
@@ -628,13 +674,17 @@ Representation of fields
 Client libraries in more languages
 
 
-Interplay with effort like RSG-DSL~\cite{blumenthal2014towards}
+\subsection{Conclusion}
+
+Integration with effort like RSG-DSL~\cite{blumenthal2014towards}
 
 \section*{Acknowledgment}
 
 This work has been supported by the EU H2020 Marie Sk\l odowska-Curie Actions
 project DoRoThy (grant 657227) and the EU H2020 L2TOR project (grant 688014).
 
+The authors also acknowledge the contribution of the HRI lab of LAAS-CNRS (where this
+work debuted), and in particular, the influential ideas of Rachid Alami.
 
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
