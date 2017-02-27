@@ -32,8 +32,8 @@ Cascading Situation Assessment for Robots
 }
 
 
-\author{Séverin Lemaignan$^{1}$, Fotios Papadopoulos$^{1}$%
-\thanks{$^{1}$Authors are with Centre for Robotics and Neural Systems,
+\author{Séverin Lemaignan$^{*}$, Fotios Papadopoulos$^{*}$%
+\thanks{$^{*}$Authors are with Centre for Robotics and Neural Systems,
         Plymouth University, Plymouth PL48AA, United Kingdom
         {\tt\small firstname.surname@plymouth.ac.uk}}%
 }
@@ -98,16 +98,16 @@ Cascading Situation Assessment for Robots
 \uwds is a distributed and lightweight open-source
 framework\footnote{\url{https://github.com/severin-lemaignan/underworlds}} that
 enables robot programmers to build and refine in real-time spatial and temporal
-models of the environment surrounding a robot. \uwds make it possible to share
+models of the environment surrounding a robot. \uwds makes it possible to share
 these world models amongst the software components running on the robot.
-Critically, \uwds permits to represent and manipulate in a distributed manner
-\emph{multiple alternatives} to the current, perceived world model: for
-instance, the world with some objects filtered out, the world `viewed' from the
-perspective of another agent, an hypothetical world resulting from the simulated
+Besides, \uwds permits to represent and manipulate in a distributed manner
+\emph{multiple alternatives} to the current, perceived world model. For
+instance, the world with some objects filtered out; the world `viewed' from the
+perspective of another agent; an hypothetical world resulting from the simulated
 application of a plan, etc.
 
 
-\subsection{Situation Assessment}
+\subsection{Distributed Situation Assessment}
 
 \begin{figure}[ht!]
     \centering
@@ -138,8 +138,8 @@ maps~\cite{Nuechter2008, Galindo2008,Blodow2011} or affordance-based planning
 and object classification~\cite{Lorken2008, Varadarajan2011}.
 
 
-\uwds is specifically inspired by the geometric and temporal reasoning module
-{\sc Spark} (\emph{SPAtial Reasoning \& Knowledge}~\cite{sisbot2011situation}.
+\uwds is specifically inspired by the geometric and temporal reasoner
+{\sc Spark} (\emph{SPAtial Reasoning \& Knowledge})~\cite{sisbot2011situation}.
 {\sc Spark} acts as a situation assessment reasoner that generates symbolic
 knowledge from the geometry of the environment with respect to relations between
 objects, robots and humans. It also takes into account the different perspective
@@ -153,16 +153,19 @@ Likewise, \uwds embeds a grounded amodal model of the environment, updated
 online from the robot's sensors (sensor fusion).
 
 However, {\sc Spark} is a monolithic module, that does not support sharing its
-internal 3D model to other external components. On the contrary, \uwds focuses
-on offering a shared and distributed representation within the robot's software
-architecture. Previous work on distributed scene graphs~\cite{naef2003blue} has
-been applied to robotics to provide a shared 3D representation of the robot's
-environment (like the \emph{Robot Scene Graph}~\cite{blumenthal2013scene} or 
-\emph{Deep State Representation}~\cite{bustos2016unified} approaches).
+internal 3D model to other external components. In contrast, \uwds focuses on
+offering a shared and distributed representation of the environment within the
+robot's software architecture.
 
-\uwds further extends this line of work by providing the ability to manipulate
-several \emph{alternative 3D worlds}, corresponding to filtered or hypothetical
-\emph{views} on the perceived model of the environment.
+Work on distributed scene graphs~\cite{naef2003blue} has been previously applied
+to robotics to provide a shared 3D representation of the robot's environment
+(for instance, the \emph{Robot Scene Graph}~\cite{blumenthal2013scene} or the
+\emph{Deep State Representation} proposed in~\cite{bustos2016unified}).  \uwds
+offers a similar distribution mechanism for 3D scene graphs and extends it to
+temporal representations. Besides, \uwds further extends this line of work by
+providing the ability to create, manipulate and share \emph{multiple alternative
+worlds}, corresponding for instance to filtered or hypothetical \emph{views} on
+the initial, perceived model of the environment.
 
 
 \subsection{Representing Alternative States of the Environment}
