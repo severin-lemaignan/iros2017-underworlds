@@ -437,10 +437,12 @@ with underworlds.Context("walls_filter") as ctx:
 
 
 \end{pythoncode}
-    \caption{Example of a simple \uwds Python client named {\tt walls\_filter}:
-    the client connects to the \uwds network, efficiently accesses the world
-    {\tt example\_in}, filter out some objects, and publish the remaining
-    objects in the world {\tt example\_out}.} \label{lst|pythonapi}
+    \caption{Example of a simple \uwds filter, written in Python, and named {\tt
+    walls\_filter}: the client connects to the \uwds network, walkthrough the
+    scene graph of world {\tt example\_in}, filter out some objects, and publish
+    the remaining objects in the world {\tt example\_out}.}
+    
+    \label{lst|pythonapi}
 \end{listing}
 
 \subsection{Standard Clients}
