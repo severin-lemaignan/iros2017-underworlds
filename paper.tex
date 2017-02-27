@@ -112,13 +112,14 @@ application of a plan, etc.
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=\linewidth]{overview}
-    \caption{Schema of a possible \uwds network: eight possible, user-written
-    \emph{clients} (in blue) are sharing environment models through four
-    independent \emph{worlds} (made of joint spatial and temporal models). This architecture
-    enables successive and modular refinement of the models
-    (\emph{cascading} situation assessment), effectively adapted to each
-    client's needs (yellow nodes represent other possible components in the system that do not
-    interact directly with the \uwds network).}
+    \caption{Schema of a possible \uwds network: eight (user-written \&
+    architecture specific) \emph{clients} (in blue) are sharing environment
+    models through four independent \emph{worlds} (made of joint spatial and
+    temporal models). This architecture enables successive and modular
+    refinement of the models (\emph{cascading} situation assessment),
+    effectively adapted to each client's needs. \textit{Dashed yellow nodes represent
+    other possible components in the system that do not interact directly with
+    the \uwds network}.}
 
     \label{fig|scene}
 
@@ -254,7 +255,7 @@ has not been proposed so far.
 approach to \textbf{represent and share multiple parallel representations of the
 world}. \uwds does so by permitting clients to clone existing worlds, modify
 them, and re-share them, without the cost of duplicating geometric data (as
-explained in section~\ref{design}). By organizing clients in a network
+explained at section~\ref{design}). By organizing clients in a network
 (Figure~\ref{fig|scene}), worlds can be made dependent on each other, resulting
 in a loosely-coupled modular approach to spatio-temporal world representation
 that we call \emph{cascading situation assessment}.
@@ -265,7 +266,7 @@ that we call \emph{cascading situation assessment}.
 
 \subsection{Cascading architecture}
 
-Figure~\ref{fig|scene} pictures a typically \uwds topology: a graph (that
+Figure~\ref{fig|scene} pictures a typical \uwds topology: a graph (that
 happens to be a directed acyclic graph on Figure~\ref{fig|scene}, but does not
 have to be in the general case -- cycles are permitted) of \emph{clients}
 connected through shared data structures called \emph{worlds}.
@@ -274,12 +275,12 @@ connected through shared data structures called \emph{worlds}.
 
 Software components accessing \uwds worlds are called clients. Some standard
 clients (like a 3D visualization tool) are provided with the \uwds package (see
-section~\ref{std_clients}), but clients are otherwise written by the end users
+section~\ref{std_clients}). Clients are otherwise written by the end users
 using the \uwds client API (see section~\ref{api}).
 
 Clients can both read and write onto the worlds they are connected to, and
 automatically see updates broadcasted by other clients connected to the same
-worlds.
+world.
 
 Four specific types of clients can be distinguished: \textbf{root clients} which
 create and update worlds (`write-only' client, like the \emph{Sensor fusion} and
@@ -300,8 +301,8 @@ events.
 
 Each world is technically independent from every others. Dependencies between
 worlds arise from the clients' connections. For instance, filters effectively
-create a dependency between worlds. A client like the \textit{Physics-based
-position correction} client create a dependency between the world {\tt base} (which
+create a dependency between worlds. On Figure~\ref{fig|scene}, the \textit{Physics-based
+position correction} client creates a dependency between the world {\tt base} (which
 represents here the result of raw sensor fusion) and the world {\tt corrected}
 which would be a physically-consistent copy of {\tt base}.
 As a result, an \uwds network can be seen as a dependency graph between worlds (where
@@ -314,33 +315,35 @@ and model branching.
 
 \subsubsection{Scenes}
 
-\emph{Worlds} contain both a geometric model and a temporal model. The geometric
+Worlds contain both a geometric model and a temporal model. The geometric
 model is represented as a scene graph. The scene graph has a unique root node,
 to which a tree of other nodes is parented.
 
-Nodes in the scene graph have four possible types: \textbf{objects} that represent
-concrete physical objects (typically with one or several associated 3D meshes);
-\textbf{entities} that represent abstract entities like reference frames or
-groups of objects; \textbf{perspectives} that represent viewpoints onto the
-scene (like cameras or human gaze); and \textbf{fields} that represent scalar or
-vector fields (like the visibility of an object, the working space of robot,
-etc. -- note that fields are not yet implemented in the current version of
-\uwds, see section~\ref{futurework}).
+Nodes in an \uwds scene graph have four possible types: \textbf{objects} that
+represent concrete physical objects (typically with one or several associated 3D
+meshes); \textbf{entities} that represent abstract entities like reference
+frames or groups of objects; \textbf{perspectives} that represent viewpoints
+onto the scene (like cameras or human gaze); and \textbf{fields} that represent
+scalar or vector fields (like the visibility of an object, the working space of
+robot, etc. -- note that fields are not yet implemented in the current version
+of \uwds, see section~\ref{futurework}).
 
 Every node has a unique ID, a parent, a 3D transformation relative to the parent
-and an optional name. \emph{Object} nodes optionally store as well pointers to their
-associated meshes. Importantly, mesh data (or other geometric datasets like
-point clouds) are \emph{not} stored within the nodes. \uwds represents geometric
-data as immutable data, labelled with their hash (preventing data duplication).
-Nodes only store the hash of their geometric data, and the actual data is pulled
-by client whenever they actually need it (for rendering for instance).
+and an optional name. \emph{Object} nodes optionally store as well pointers to
+their associated meshes. Importantly, mesh data (or other geometric datasets
+like point clouds) are \emph{not} stored within the nodes themselves. \uwds
+represents geometric data as immutable data, labelled with their hash
+(preventing \textit{de facto} data duplication).  Nodes only store the hash
+corresponding to the desired geometric data, and the actual data is pulled from
+the server by the clients whenever they actually need it (for rendering for
+instance).
 
 \subsubsection{Timelines}
 
 Complementing the spatial representation encapsulated in the scene graph, each
 world also store the world's \emph{timeline}. This data structure is shared
 and synchronized amongst the clients in the same way as the scene graph.
-Client can record in the timeline both \emph{events} (duration-less state) and
+Clients can record in the timeline both \emph{events} (duration-less states) and
 \emph{situations}, \ie states with a start time and a (possibly open-ended) end time.
 
 Importantly, the \uwds server automatically generates a snapshot of
@@ -366,33 +369,30 @@ performing action recognition.
 \emph{network of interconnected clients} which manipulate spatial and temporal
 models of the robot environment (for instance, a motion planner, a object
 detection module, a human skeleton tracker, etc.), and for a {client library}
-that makes it easy to interface existing software components with the network.
+that makes it possible to interface existing software components with the network.
 
 Critically, the network is essentially hidden to the client: from the user
-perspective, the environment model is manipulated as local data structures (the
-\emph{worlds}). Modifications to the model are asynchronously synchronised with
+perspective, the environment model is manipulated as a local data structure (see
+Listing~\ref{lst|pythonapi}). Modifications to the model are asynchronously synchronised with
 a central server (the {\tt underworlded} daemon) and broadcasted to every other
-client in the network.
+client connected to the same world.
 
 As previously mentioned, worlds are composite data structures comprising of a
 scene graph and a timeline. These data structures are synchronized using
 Google's gRPC message passing framework\footnote{\url{http://www.grpc.io/}}, ensuring
-high throughput, reliability, cross-platform/cross-language support. The \uwds
-API is specifically discussed hereafter, section~\ref{api}.
+high throughput, reliability and cross-platform/cross-language support. The \uwds
+API is specifically discussed hereafter, at section~\ref{api}.
 
-
-\subsubsection*{Performance considerations}
 
 \uwds is meant to broadcast complex environment representations (typically
 including large geometric datasets, like meshes) in real-time. \uwds itself does
-not perform many CPU intensive tasks (CPU intensive processing tasks -- sensor fusion, physics
-simulation, etc. -- are realized by the clients) and as such, the performance
-bottleneck is essentially the network's data throughput.
-
-In that regard, one of the simple yet critical optimization performed by \uwds
-is automatic caching of mesh data. Mesh data are not transmitted when nodes are
-updated; only a hash value of the mesh data. The client can then request the
-full data whenever they actually need it.
+not perform many CPU intensive tasks (CPU intensive processing tasks -- sensor
+fusion, physics simulation, etc. -- are performed by the clients themselves) and
+as such, the performance bottleneck is essentially the network's data
+throughput.  In that regard, one of the simple yet critical optimization
+performed by \uwds is automatic caching of mesh data. Mesh data are not
+transmitted when nodes are updated; only a hash value of the mesh data. The
+client can then request the full data whenever they actually need it.
 
 
 
@@ -401,7 +401,7 @@ full data whenever they actually need it.
 \subsection{API}
 \label{api}
 
-As mentioned in section~\ref{arch}, \uwds uses Google's gRPC as message passing
+As mentioned at section~\ref{arch}, \uwds uses Google's gRPC as message passing
 protocol. The protocol is explicitly defined (using the \emph{protocol
 buffers}\footnote{\url{https://developers.google.com/protocol-buffers/}}
 interface definition language), and bindings to various languages
