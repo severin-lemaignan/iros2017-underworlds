@@ -401,39 +401,37 @@ client can then request the full data whenever they actually need it.
 \subsection{API}
 \label{api}
 
-As mentioned at section~\ref{arch}, \uwds uses Google's gRPC as message passing
-protocol. The protocol is explicitly defined (using the \emph{protocol
+As mentioned, \uwds uses Google's gRPC as message passing protocol. The protocol
+is explicitly defined (using the \emph{protocol
 buffers}\footnote{\url{https://developers.google.com/protocol-buffers/}}
-interface definition language), and bindings to various languages
-and platforms can be automatically generated from the protocol definition file
-(as of Feb 2017, gRPC can generate bindings for C, C++, C\#, Node.js, PHP, Ruby,
-Python, Go and Java on Windows, Mac and Linux).
-
-The cross-platform/cross-language support of gRPC is especially welcomed in the
-academic context, as it offers ease and flexibility to plug a variety of
-pre-existing components into an \uwds network.
+interface definition language), and bindings to various languages and platforms
+can be automatically generated from the protocol definition file (as of Feb
+2017, gRPC can generate bindings for C, C++, C\#, Node.js, PHP, Ruby, Python, Go
+and Java on Windows, Mac and Linux).  The cross-platform/cross-language support
+of gRPC is especially welcomed in the academic context, as it offers ease and
+flexibility to plug a variety of pre-existing components into an \uwds network.
 
 
 However, the gRPC message passing layer is low-level with respect to the typical
 use of \uwds (manipulation of asynchronous, distributed spatio-temporal models
 of the robot environment). In particular, the asynchronous fetching (and
-conversely, remote updating) of nodes and time-related objects should be
-entirely hidden from the user, and managed instead by the \uwds client library.
+conversely, remote updating) of nodes and time-related objects is typically
+hidden from the user, and managed instead by the \uwds client library.
 
-\uwds currently offers such a high-level client library for Python only. A C++
-library is being developed (currently in 'alpha' state).
-Listing~\ref{lst|pythonapi} gives a complete example of an \uwds client
-performing simple filtering: the client continuously ``listen'' for changes in
-an input world, hide some items (in this case, items whose name contain the
-string ``{\tt wall}''), and forward all other changes to an output world,
-effectively making the output world a copy of the input world with all walls
-removed.
+\uwds currently offers such a high-level client library for Python only (a C++
+library is under development).  Listing~\ref{lst|pythonapi} gives a complete
+example of an \uwds client performing simple filtering: the client continuously
+listen for changes in an input world, removes some objects (in this case, items
+whose name contain the string ``{\tt wall}''), and forward all other changes to
+an output world, effectively making the output world a copy of the input world
+with all walls removed.
 
 \begin{listing}[h!]
 
 \begin{pythoncode}
 import underworlds
 
+# by default, connect to the server on localhost
 with underworlds.Context("walls_filter") as ctx:
 
     in_world = ctx.worlds["example_in"]
@@ -449,16 +447,19 @@ with underworlds.Context("walls_filter") as ctx:
 
 
 \end{pythoncode}
-    \caption{Example of a simple yet complete \uwds filter, written in Python, and named {\tt
-    walls\_filter}: the client connects to the \uwds network, walk through the
-    scene graph of world {\tt example\_in}, filter out some objects, and publish
-    the remaining objects in the world {\tt example\_out}.}
-    
+    \caption{Example of a simple yet complete \uwds filter, written in Python:
+    the client connects to the \uwds network, walk through the scene graph of
+    world {\tt example\_in}, filter out some objects, and publishes the
+    remaining objects in the world {\tt example\_out}.}
+
     \label{lst|pythonapi}
 \end{listing}
 
 \subsection{Standard Clients}
 \label{std_clients}
+
+The \uwds package provides several standard clients to perform common tasks on
+\uwds networks.
 
 \subsubsection{3D Visualization and manipulation}
 
@@ -467,11 +468,11 @@ represent 3D entities purely as data structures: no visual representation is
 involved (and as such, the \uwds server and core libraries do not depend on any
 graphics library like OpenGL). However, for all practical purposes, the ability
 to visualize the content of a scene is desirable. \uwds provides a standard
-client, {\tt uwds view}, that performs real-time 3D rendering of the scene,
+client, {\tt uwds view}, that performs real-time 3D rendering of worlds,
 using OpenGL (Figure~\ref{fig|uwds-view}).
 
 This tool also support basic object manipulations, that are broadcasted to the
-other \uwds clients as expected.
+other \uwds clients connected to the same world.
 
 \paragraph*{Assets loading}
 
@@ -484,22 +485,23 @@ object. It sends the mesh to the \uwds server and creates a new node which
 references the mesh. At the next frame update, the 3D viewer sees a new node
 referencing a yet unknown mesh. The viewer request the mesh data from the
 server, stores it internally (\eg as an OpenGL buffer), and renders it. Whenever
-the node transformation is updated, the 3D viewer can re-render it without
+the node transformation is updated, the 3D viewer can re-render the node without
 having to download the mesh from the server again.
 
 Often, objects manipulated by the robot have known meshes with corresponding CAD
-models. In these case, \uwds provides a tool, {\tt uwds load}, that loads a mesh
-into a \uwds network (and optionally, creates a node) from a large range of 3D
-format\footnote{The underlying import capability is provided by the {\sc assimp}
-library.  \url{http://assimp.sourceforge.net/}} (including Collada, FBX, OBJ,
-Blender).
+models that can be conveniently pre-loaded. In these case, \uwds provides a
+tool, {\tt uwds load}, that loads a mesh into a \uwds network (and optionally,
+creates a node) from a large range of 3D format (including Collada, FBX, OBJ,
+Blender)\footnote{The underlying import
+capability is provided by the {\sc assimp} library.
+\url{http://assimp.sourceforge.net/}}.
 
 \subsubsection{Introspection and debugging}
 
 \uwds provides a range of tools to inspect a running the network. Graphical
 tools ({\tt uwds explorer} and {\tt uwds timeline}, see Figure~\ref{fig|explorer})
 provide an user-friendly overview of the system's graph with the connections
-between the clients and the worlds as well as their activity.
+between the clients and the worlds, as well as their activity.
 
 \begin{figure}
     \centering
@@ -519,8 +521,8 @@ specific node ({\tt uwds show}).
 architectures, and interfaces transparently with ROS' TF frame system through
 the {\tt uwds tf} client.
 
-The {\tt uwds tf} root client continuously monitor the ROS TF tree, and mirror
-TF frames as nodes in a given \uwds world. A node is first created if none
+The {\tt uwds tf} client continuously monitor the ROS TF tree, and mirrors
+TF frames as nodes in the desired \uwds world. A node is first created if none
 matches a given TF frame, and its transformation is subsequently updated,
 mirroring the TF frame. A regular expression can be provided to only mirror a
 subset of the TF tree into \uwds.
@@ -554,17 +556,17 @@ allo-centric and ego-centric (\ie viewer-dependent) spatial relations
 between objects (Figure~\ref{fig|spatialrelations}).
 
 
-\uwds also implement an efficient algorithm to assess object visibility from a
-specific viewpoint (\ie from a given \emph{camera} node). The algorithm (color
+\uwds also implements an efficient algorithm to assess object visibility from a
+specific viewpoint (\ie from a given \emph{perspective} node). The algorithm (color
 picking) enables fast (single pass) computation of the visibility of every
-object in the scene, while providing control regarding how much of an object
-should be actually visible to be considered as globally visible. The
+object in the scene, while providing control regarding how many pixels should be
+actually visible for the object to be considered globally visible. The
 command-line tool {\tt uwds visibility} returns the list of visible objects from
-the point of view of every camera in a given world, and \uwds also provides the
+the point of view of each camera in a given world, and \uwds also provides the
 helper class {\tt VisibilityMonitor} to programmatically access visibility
 information.
 
-When integrated into a filter node, visibility computation enables to easily
+When integrated into a filter node, visibility computation allows to easily
 create new worlds representing the estimated perspectives of the different
 agents. Listing~\ref{lst|humanperspective} provides the complete code of such an
 \uwds client.
