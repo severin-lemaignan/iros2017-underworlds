@@ -275,7 +275,7 @@ connected through shared data structures called \emph{worlds}.
 \subsubsection{Clients}
 
 Software components accessing \uwds worlds are called clients. Some standard
-clients (like a 3D visualization tool) are provided with the \uwds package (see
+clients (like a 3D visualisation tool) are provided with the \uwds package (see
 section~\ref{std_clients}). Clients are otherwise written by the end users
 using the \uwds client API (see section~\ref{api}).
 
@@ -285,7 +285,7 @@ world.
 
 Four specific types of clients can be distinguished: \textbf{root clients} which
 create and update worlds (`write-only' client, like the \emph{Sensor fusion} and
-\emph{ROS interface} clients on Figure~\ref{fig|scene}); \textbf{leaf clients}
+\emph{ROS interface} clients in Figure~\ref{fig|scene}); \textbf{leaf clients}
 which on the contrary only read worlds, without modifying them (like the
 \emph{Computation of spatial relations} client on Figure~\ref{fig|scene});
 \textbf{filters} that copy an input world into an output world, performing
@@ -300,7 +300,7 @@ Worlds are effectively distributed data structures composed of a scene graph
 representing the 3D geometry of the environment, and a timeline storing temporal
 events.
 
-Each world is technically independent from every others. Dependencies between
+Each world is technically independent from all others. Dependencies between
 worlds arise from the clients' connections. For instance, filters effectively
 create a dependency between worlds. On Figure~\ref{fig|scene}, the \textit{Physics-based
 position correction} client creates a dependency between the world {\tt base} (which
@@ -324,9 +324,9 @@ Nodes in an \uwds scene graph have four possible types: \textbf{objects} that
 represent concrete physical objects (typically with one or several associated 3D
 meshes); \textbf{entities} that represent abstract entities like reference
 frames or groups of objects; \textbf{perspectives} that represent viewpoints
-onto the scene (like cameras or human gaze); and \textbf{fields} that represent
+of the scene (like cameras or human gaze); and \textbf{fields} that represent
 scalar or vector fields (like the visibility of an object, the working space of
-robot, etc. -- note that fields are not yet implemented in the current version
+robot, \etc -- note that fields are not yet implemented in the current version
 of \uwds, see section~\ref{futurework}).
 
 Every node has a unique ID, a parent, a 3D transformation relative to the parent
@@ -342,15 +342,15 @@ instance).
 \subsubsection{Timelines}
 
 Complementing the spatial representation encapsulated in the scene graph, each
-world also store the world's \emph{timeline}. This data structure is shared
+world also stores the world's \emph{timeline}. This data structure is shared
 and synchronised amongst the clients in the same way as the scene graph.
-Clients can record in the timeline both \emph{events} (duration-less states) and
-\emph{situations}, \ie states with a start time and a (possibly open-ended) end time.
+Clients can record both \emph{events} (duration-less states) and
+\emph{situations} in the timeline, \ie states with a start time and a (possibly open-ended) end time.
 
 Importantly, the \uwds server automatically generates a snapshot of
 the scene graph whenever an event or situation is added to the timeline. The
 snapshot is associated to the event, which allows clients to effectively retrieve past
-states of the world. This capability is thought to be primarly used by \uwds clients
+states of the world. This capability is anticipated to be primarily used by \uwds clients
 performing action recognition.
 
 \begin{figure}
@@ -358,7 +358,7 @@ performing action recognition.
     \includegraphics[width=\linewidth]{uwds-screenshot}
     \caption{Screenshot of the {\tt uwds view} 3D visualisation and manipulation
     tool. In this particular example, the 3D meshes have been pre-loaded using
-    {\tt uwds load}. Their positions are then updated at run time using the
+    {\tt uwds load}. Their positions are then updated at run-time using the
     robot's sensors and proprioception (joint state).}
     \label{fig|uwds-view}
 \end{figure}
@@ -377,8 +377,9 @@ perspective, the environment model is manipulated as a local data structure (see
 Listing~\ref{lst|pythonapi}). Modifications to the model are asynchronously synchronised with
 a central server (the {\tt underworlded} daemon) and broadcasted to every other
 client connected to the same world.
+% JK: underworlded - intentional? (I guess yes, but checking)
 
-As previously mentioned, worlds are composite data structures comprising of a
+As previously mentioned, worlds are composite data structures comprised of a
 scene graph and a timeline. These data structures are synchronised using
 Google's gRPC message passing framework\footnote{\url{http://www.grpc.io/}}, ensuring
 high throughput, reliability and cross-platform/cross-language support. The \uwds
@@ -388,12 +389,12 @@ API is specifically discussed hereafter, in section~\ref{api}.
 \uwds is meant to broadcast complex environment representations (typically
 including large geometric datasets, like meshes) in real-time. \uwds itself does
 not perform many CPU intensive tasks (CPU intensive processing tasks -- sensor
-fusion, physics simulation, etc. -- are performed by the clients themselves) and
+fusion, physics simulation, \etc -- are performed by the clients themselves) and
 as such, the performance bottleneck is essentially the network's data
-throughput.  In that regard, one of the simple yet critical optimisation
+throughput.  In that regard, one of the simple yet critical optimisations
 performed by \uwds is automatic caching of mesh data. Mesh data are not
 transmitted when nodes are updated; only a hash value of the mesh data. The
-client can then request the full data whenever they actually need it.
+client can then request the full data whenever it is actually needed.
 
 
 
@@ -408,8 +409,8 @@ buffers}\footnote{\url{https://developers.google.com/protocol-buffers/}}
 interface definition language), and bindings to various languages and platforms
 can be automatically generated from the protocol definition file (as of Feb
 2017, gRPC can generate bindings for C, C++, C\#, Node.js, PHP, Ruby, Python, Go
-and Java on Windows, Mac and Linux).  The cross-platform/cross-language support
-of gRPC is especially welcomed in the academic context, as it offers ease and
+and Java, on Windows, Mac and Linux).  The cross-platform/cross-language support
+of gRPC is especially welcome in the academic context, as it offers ease and
 flexibility to plug a variety of pre-existing components into an \uwds network.
 
 
@@ -422,8 +423,8 @@ hidden from the user, and managed instead by the \uwds client library.
 \uwds currently offers such a high-level client library for Python only (a C++
 library is under development).  Listing~\ref{lst|pythonapi} gives a complete
 example of an \uwds client performing simple filtering: the client continuously
-listen for changes in an input world, removes some objects (in this case, items
-whose name contain the string ``{\tt wall}''), and forward all other changes to
+listens for changes in an input world, removes some objects (in this case, items
+whose name contain the string ``{\tt wall}''), and forwards all other changes to
 an output world, effectively making the output world a copy of the input world
 with all walls removed.
 
@@ -442,15 +443,15 @@ with underworlds.Context("walls_filter") as ctx:
 
         in_world.scene.waitforchanges()
 
-        for node in in_word.scene.nodes:
+        for node in in_world.scene.nodes:
             if("wall" not in node.name):
                 out_world.scene.nodes.update(node)
 
 
 \end{pythoncode}
     \caption{Example of a simple yet complete \uwds filter, written in Python:
-    the client connects to the \uwds network, walk through the scene graph of
-    world {\tt example\_in}, filter out some objects, and publishes the
+    the client connects to the \uwds network, walks through the scene graph of
+    world {\tt example\_in}, filters out some objects, and publishes the
     remaining objects in the world {\tt example\_out}.}
 
     \label{lst|pythonapi}
@@ -465,14 +466,14 @@ The \uwds package provides several standard clients to perform common tasks on
 \subsubsection{3D Visualisation and manipulation}
 
 Interestingly, while \uwds deals with 3D geometries and scenes, it does
-represent 3D entities purely as data structures: no visual representation is
+represent 3D entities purely as data structures; no visual representation is
 involved (and as such, the \uwds server and core libraries do not depend on any
 graphics library like OpenGL). However, for all practical purposes, the ability
 to visualise the content of a scene is desirable. \uwds provides a standard
 client, {\tt uwds view}, that performs real-time 3D rendering of worlds,
 using OpenGL (Figure~\ref{fig|uwds-view}).
 
-This tool also support basic object manipulations, that are broadcasted to the
+This tool also supports basic object manipulations, that are broadcasted to the
 other \uwds clients connected to the same world.
 
 \paragraph*{Assets loading}
@@ -484,36 +485,36 @@ As such, any client can load 3D data that is automatically made available to the
 whole network. For example, an object recognition module recognises a new
 object. It sends the mesh to the \uwds server and creates a new node which
 references the mesh. At the next frame update, the 3D viewer sees a new node
-referencing a yet unknown mesh. The viewer request the mesh data from the
+referencing an unknown mesh. The viewer requests the mesh data from the
 server, stores it internally (\eg as an OpenGL buffer), and renders it. Whenever
 the node transformation is updated, the 3D viewer can re-render the node without
 having to download the mesh from the server again.
 
 Often, objects manipulated by the robot have known meshes with corresponding CAD
-models that can be conveniently pre-loaded. In these case, \uwds provides a
+models that can be conveniently pre-loaded. In these cases, \uwds provides a
 tool, {\tt uwds load}, that loads a mesh into a \uwds network (and optionally,
-creates a node) from a large range of 3D format (including Collada, FBX, OBJ,
+creates a node) from a large range of 3D formats (including Collada, FBX, OBJ,
 Blender)\footnote{The underlying import
 capability is provided by the {\sc assimp} library.
 \url{http://assimp.sourceforge.net/}}.
 
 \subsubsection{Introspection and debugging}
 
-\uwds provides a range of tools to inspect a running the network. Graphical
+\uwds provides a range of tools to inspect a running network. Graphical
 tools ({\tt uwds explorer} and {\tt uwds timeline}, see Figure~\ref{fig|explorer})
-provide an user-friendly overview of the system's graph with the connections
+provide a user-friendly overview of the system's graph with the connections
 between the clients and the worlds, as well as their activity.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{tools}
     \caption{Screenshots of the timeline (top) and network (bottom)
-    introspection tools. Worlds are represented as boxes, clients as ellipses.}
+    introspection tools. Worlds are represented as boxes; clients as ellipses.}
     \label{fig|explorer}
 \end{figure}
 
-Specialised command-line tools are also available to list at run-time the worlds
-and their content ({\tt uwds ls}) or to display detailed informations on a
+Specialised command-line tools are also available to list the worlds
+and their content ({\tt uwds ls}) at run-time, or to display detailed information for a
 specific node ({\tt uwds show}).
 
 \subsubsection{Interface with ROS}
@@ -522,14 +523,14 @@ specific node ({\tt uwds show}).
 architectures, and interfaces transparently with ROS' TF frame system through
 the {\tt uwds tf} client.
 
-The {\tt uwds tf} client continuously monitor the ROS TF tree, and mirrors
+The {\tt uwds tf} client continuously monitors the ROS TF tree, and mirrors
 TF frames as nodes in the desired \uwds world. A node is first created if none
 matches a given TF frame, and its transformation is subsequently updated,
 mirroring the TF frame. A regular expression can be provided to only mirror a
 subset of the TF tree into \uwds.
 
 Currently, the process is unidirectional: the {\tt uwds tf} client performs TF
-to \uwds updates, but not the opposite.
+to \uwds updates, but not the reverse.
 
 \subsection{Spatial Reasoning and Perspective Taking}
 
@@ -537,7 +538,7 @@ Spatial reasoning~\cite{O'Keefe1999} is a field in its own right, and has been
 used for natural language processing for applications such as direction
 recognition~\cite{Kollar2010,Matuszek2010} or language
 grounding~\cite{Tellex2010}. Other examples in human-robot interaction include Ros
-\etal~\cite{ros2010solving, ros2010which} which has been recently integrated
+\etal~\cite{ros2010solving, ros2010which} which has recently been integrated
 into a full architecture for autonomous human-robot
 interaction~\cite{lemaignan2016artificial}.
 
@@ -560,15 +561,15 @@ between objects (Figure~\ref{fig|spatialrelations}).
 \uwds also implements an efficient algorithm to assess object visibility from a
 specific viewpoint (\ie from a given \emph{perspective} node). The algorithm (color
 picking) enables fast (single pass) computation of the visibility of every
-object in the scene, while providing control regarding how many pixels should be
-actually visible for the object to be considered globally visible. The
+object in the scene, while providing control regarding how many pixels should actually be
+visible for the object to be considered globally visible. The
 command-line tool {\tt uwds visibility} returns the list of visible objects from
 the point of view of each camera in a given world, and \uwds also provides the
 helper class {\tt VisibilityMonitor} to programmatically access visibility
 information.
 
-When integrated into a filter node, visibility computation allows to easily
-create new worlds representing the estimated perspectives of the different
+When integrated into a filter node, visibility computation allows easy
+creation of new worlds representing the estimated perspectives of the different
 agents. Listing~\ref{lst|humanperspective} provides the complete code of such an
 \uwds client.
 
@@ -630,9 +631,9 @@ with underworlds.Context("Human PoV") as ctx:
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{l2tor-photo2}
-    \caption{A user manipulating objects on top of a RFID mat (providing object
+    \caption{A user manipulating objects on top of an RFID mat (providing object
     localisation) with a NAO robot, while an operator monitors
-    the interaction on a tablet that display an {\tt uwds view} client.}
+    the interaction on a tablet that displays an {\tt uwds view} client.}
 
     \label{fig|l2torexample}
 \end{figure}
@@ -644,10 +645,10 @@ project, participants are instructed by a NAO robot to manipulate a number of
 Duplo-like animals on top of a printed background paper which serves as a
 landscape (Figure~\ref{fig|l2torexample}). The robot instructions are based on
 pedagogical strategies to promote spatial relation learning by object
-manipulation. Such instructions include commands like to place the elephant
-\textit{on top} or \textit{next to} the cube or put the giraffe \textit{inside}
+manipulation. Such instructions include commands to place the elephant
+\textit{on top} or \textit{next to} the cube, or put the giraffe \textit{inside}
 the house.  To assess the performance, the robot and the operator need to
-compute spatial relation between objects from the visual perspective of the
+compute spatial relationships between objects from the visual perspective of the
 participant.
 
 \subsection*{Architecture}
@@ -659,9 +660,9 @@ participant.
     \label{fig|l2torarchitecture}
 \end{figure}
 
-The interaction scenario requires a number of \uwds clients. The client are
+The interaction scenario requires a number of \uwds clients. The clients are
 distributed across two computers (the robot and a Microsoft Windows-operated
-tablet) that communicate with each other in order to synchronise the worlds
+tablet) that communicate with each other in order to synchronise the world
 representations. Figure~\ref{fig|l2torarchitecture} illustrates the topology of
 the \uwds network, that consists in the following clients:
 
@@ -697,18 +698,18 @@ physical objects at the same time.
 
 \section{Discussion and Conclusion}
 
-\subsection{Relation to existing robotic middlewares}
+\subsection{Relation to existing robotic middleware}
 
-Like traditional robotic middlewares, \uwds offers a form of distributed
+Like traditional robotic middleware, \uwds offers a form of distributed
 computation based on message passing. However, it distinguishes itself from
 existing middleware in several significant ways.
 
 First and foremost, \uwds purposefully does not offer any \emph{general}
-capability at distributing computation and data flows amongst independent
-components: it focuses specifically on distributing environment models, both
+capability to distribute computation and data flow amongst independent
+components: it focusses specifically on distributing environment models, both
 spatial (geometric models) and temporal (events and situations).
 
-While using standard middlewares as \emph{underlying transport} for \uwds would be
+While using standard middleware as \emph{underlying transport} for \uwds would be
 technically feasible and relatively easy to implement, it does not offer any
 clear advantage over lighter and dedicated message passing libraries like ZeroMQ
 or gRPC (the later being the one used by \uwds).
@@ -736,7 +737,7 @@ maintaining a network of dependencies amongst themselves; a typology of clients
 (\emph{root}, \emph{leaf}, \emph{filter}, \emph{transformer}) to systematically
 describe such a network of representations dependencies.
 
-We have presented as well a concrete instantiation of a system relying on \uwds
+We have additionally presented a concrete instantiation of a system relying on \uwds
 for its representation needs, and we have sketched future directions of
 development.
 
