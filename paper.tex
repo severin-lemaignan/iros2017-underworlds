@@ -282,7 +282,7 @@ section~\ref{std_clients}). Clients are otherwise written by the end users
 using the \uwds client API (see section~\ref{api}).
 
 Clients can both read and write onto the worlds they are connected to, and
-automatically see updates broadcasted by other clients connected to the same
+automatically see updates broadcast by other clients connected to the same
 world.
 
 Four specific types of clients can be distinguished: \textbf{root clients} which
@@ -377,7 +377,7 @@ that makes it possible to interface existing software components with the networ
 Critically, the network is essentially hidden to the client: from the user
 perspective, the environment model is manipulated as a local data structure (see
 Listing~\ref{lst|pythonapi}). Modifications to the model are asynchronously synchronised with
-a central server (the {\tt underworlded} daemon) and broadcasted to every other
+a central server (the {\tt underworlded} daemon) and broadcast to every other
 client connected to the same world.
 % JK: underworlded - intentional? (I guess yes, but checking)
 
@@ -475,8 +475,7 @@ to visualise the content of a scene is desirable. \uwds provides a standard
 client, {\tt uwds view}, that performs real-time 3D rendering of worlds,
 using OpenGL (Figure~\ref{fig|uwds-view}).
 
-%CDW - brocasted -> broadcast
-This tool also supports basic object manipulations, that are broadcasted to the
+This tool also supports basic object manipulations, that are broadcast to the
 other \uwds clients connected to the same world.
 
 \paragraph*{Assets loading}
