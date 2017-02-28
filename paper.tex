@@ -81,7 +81,7 @@ Cascading Situation Assessment for Robots
     geometries) and timelines (for representation of temporal events). \uwds
     supports \emph{cascading} representations: the environment is viewed as a
     set of \emph{worlds} that can each have different spatial and temporal
-    granularities, and may depend on each others.  \uwds also provides a set of
+    granularities, and may depend on each other.  \uwds also provides a set of
     high-level client libraries and tools to introspect and manipulate the
     environment models.
 
@@ -97,13 +97,13 @@ Cascading Situation Assessment for Robots
 
 \uwds is a distributed and lightweight open-source
 framework\footnote{\url{https://github.com/severin-lemaignan/underworlds}} that
-enables robot programmers to build and refine in real-time spatial and temporal
-models of the environment surrounding a robot. \uwds makes it possible to share
+enables robot programmers to build and refine spatial and temporal
+models of the environment surrounding a robot in real-time. \uwds makes it possible to share
 these world models amongst the software components running on the robot.
-Besides, \uwds permits to represent and manipulate in a distributed manner
-\emph{multiple alternatives} to the current, perceived world model. For
+Additionally, \uwds enables users to represent and manipulate
+\emph{multiple alternatives} to the current, perceived world model in a distributed manner. For
 instance, the world with some objects filtered out; the world `viewed' from the
-perspective of another agent; an hypothetical world resulting from the simulated
+perspective of another agent; a hypothetical world resulting from the simulated
 application of a plan, etc.
 
 
@@ -112,9 +112,9 @@ application of a plan, etc.
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=\linewidth]{overview}
-    \caption{Schema of a possible \uwds network: eight (user-written \&
-    architecture specific) \emph{clients} (in blue) are sharing environment
-    models through four independent \emph{worlds} (made of joint spatial and
+    \caption{Schema of a possible \uwds network: eight \emph{clients} (user-written \&
+    architecture specific; in blue) are sharing environment
+    models through four independent \emph{worlds} (made from joint spatial and
     temporal models). This architecture enables successive and modular
     refinement of the models (\emph{cascading} situation assessment),
     effectively adapted to each client's needs. \textit{Dashed yellow nodes represent
@@ -148,13 +148,13 @@ that each agent has on the environment. {\sc Spark} embeds a
 modality-independent geometric model of the environment that serves both as
 basis for the fusion of the perception modalities and as bridge with the
 symbolic layer~\cite{lemaignan2016artificial}. This geometric model is built
-from 3D CAD models of the objects, furnitures and robots, and full body, rigged
+from 3D CAD models of the objects, furniture and robots, and full body, rigged
 models of humans.  It is updated at run-time by the robot's sensors.
 Likewise, \uwds embeds a grounded amodal model of the environment, updated
 online from the robot's sensors (sensor fusion).
 
 However, {\sc Spark} is a monolithic module, that does not support sharing its
-internal 3D model to other external components. In contrast, \uwds focuses on
+internal 3D model with other external components. In contrast, \uwds focuses on
 offering a shared and distributed representation of the environment within the
 robot's software architecture.
 
@@ -165,7 +165,7 @@ to robotics to provide a shared 3D representation of the robot's environment
 offers a similar distribution mechanism for 3D scene graphs and extends it to
 temporal representations. Besides, \uwds further extends this line of work by
 providing the ability to create, manipulate and share \emph{multiple alternative
-worlds}, corresponding for instance to filtered or hypothetical \emph{views} on
+worlds}. As an example, these could correspond to filtered or hypothetical \emph{views} on
 the initial, perceived model of the environment.
 
 
@@ -177,11 +177,11 @@ the low-level perceptual layers, and the high-level decisional layers. They
 include modules like geometric reasoners (that compute spatial and topological
 relations between objects), motion planners or action recognition modules.
 
-These components exhibit different needs in terms of model,
+These components exhibit different needs in terms of representation,
 like different nominal spatial and/or temporal resolutions. For instance, a 3D
 motion planner would typically use coarse 3D models of surrounding objects to
 lower the computational load while planning, while a module assessing the
-visibility of objects might need on the contrary  high-resolution models 
+visibility of objects might need high-resolution models 
 for accurate 3D rendering. This requirement of multiple
 task-specific representations has been framed as the need for \emph{deep
 representations} by Beetz~\cite{beetz2010towards}.
@@ -191,10 +191,11 @@ representations} by Beetz~\cite{beetz2010towards}.
 %real-time sharing of such datasets is non-trivial, particularly when the said
 %data is changing (\eg in the case of map building or object recognition).
 
-Traditional robotic middlewares like ROS are not particularly well-suited to
+% JK: like software, the plural of middleware is middleware :)
+Traditional robotic middleware, like ROS, is not particularly well-suited to
 deal with these different needs: full geometric data can be represented, but are
-not first-class citizens (basic tasks like displaying a 3D mesh at a dynamic
-position are not particularly easy to perform with ROS) and critically,
+not first-class citizens (a basic task like displaying a 3D mesh at a dynamic
+position is not particularly easy to perform with ROS) and critically,
 representing and reasoning on alternative states of the environment is not
 directly feasible.
 
@@ -202,7 +203,7 @@ Representing alternative states is however often highly desirable. For instance,
 software components manipulating environment models typically perform better if
 the models are physically consistent. However, low-level perception inaccuracies
 often introduce hard-to-avoid physical inconsistencies (like detected objects
-floating in the air, or on the contrary wrongly inset into other objects).
+floating in the air, or wrongly inset into other objects).
 Therefore, a post-process stage (for instance, using a physics simulation
 engine) is needed to displace the objects seen by the robot into
 physically-correct positions. Implemented with a classical approach (for
@@ -215,37 +216,37 @@ does not scale well.
 Another example pertains to geometric task planning: a geometric task planner
 typically needs to reason over hypothetical future states of the environment
 (``what happen if I move this glass onto that pile of books?'').  The planner
-generates many possible future states, that themselves might require further
+generates many possible future states, that in turn might require further
 processing (for instance, running a physics simulation). Such a tool would
 benefit a flexible representation system, where models are derived from each
-others, with partial modifications and different timescales.
+other, with partial modifications and different timescales.
 
 A third example relates to human-robot interaction scenarios where \emph{perspective
 taking} is important (a prototypical example being the game `I spy with my
-little eyes', as implemented in~\cite{ros2010which}). Perspective taking is a
+little eye', as implemented in~\cite{ros2010which}). Perspective taking is a
 cognitive skill that relies on the ability for an agent to project itself in
 others' `eyes' to estimate what they see from their perspectives. 
-Perspective taking has been previously implemented in robotics by temporary placing
-virtual cameras at eyes position for each of the humans tracked by the
+Perspective taking has previously been implemented in robotics by temporarily placing
+virtual cameras at eye locations for each of the humans tracked by the
 robot~\cite{ros2010solving}. While acceptable for simple cases, such an approach
-does not permit to maintain truly independent models of the environment for each
-agent, and in particular does not permit false-beliefs
+does not maintain truly independent models of the environment for each
+agent, and in particular does not permit false-belief
 modelling~\cite{lemaignan2015mutual} whereas separate, independent world models
 would effectively support such a skill.
 
 Lastly, geometric \emph{pre-supposition accommodation} makes another interesting
 case for alternative worlds representation. \emph{Pre-supposition accommodation}
-comes originally from linguistics, where it describes the mechanism by which
+originally comes from linguistics, where it describes the mechanism by which
 \emph{context is adjusted [...] to accept [...] a sentence that imposes certain
 requirements on the context in which it is
 processed}~\cite{vonfintel2008presupposition}. In the context of spatio-temporal
-representations, we call pre-supposition accommodation the ability for an agent
+representations, we call pre-supposition accommodation the ability of an agent
 to adjust its model so that it matches some contextual constraint. For instance,
 if A tells B to ``catch the red balloon behind you'', B might create a
 representation of an imaginary red balloon, placed behind him, even without
 actually observing the balloon: B \emph{accommodates} the \emph{pre-supposition}
 of a red balloon being present behind himself. Endowing robots with this
-capability has been touched by Mavridis \etal within their multi-modal
+capability has been touched upon by Mavridis \etal within their multi-modal
 \emph{Grounded Situation Model}~\cite{Mavridis2006}. However, to the best of our
 knowledge, a general framework which would enable robots to accommodate spatial
 and temporal pre-suppositions by deriving imaginary worlds from existing ones
@@ -255,7 +256,7 @@ has not been proposed so far.
 approach to \textbf{represent and share multiple parallel representations of the
 world}. \uwds does so by permitting clients to clone existing worlds, modify
 them, and re-share them, without the cost of duplicating geometric data (as
-explained in section~\ref{design}). By organizing clients in a network
+explained in section~\ref{design}). By organising clients in a network
 (Figure~\ref{fig|scene}), worlds can be made dependent on each other, resulting
 in a loosely-coupled modular approach to spatio-temporal world representation
 that we call \emph{cascading situation assessment}.
@@ -317,7 +318,7 @@ and model branching.
 
 Worlds contain both a geometric model and a temporal model. The geometric
 model is represented as a scene graph. The scene graph has a unique root node,
-to which a tree of other nodes is parented.
+in which a tree of other nodes is parented.
 
 Nodes in an \uwds scene graph have four possible types: \textbf{objects} that
 represent concrete physical objects (typically with one or several associated 3D
@@ -335,14 +336,14 @@ like point clouds) are \emph{not} stored within the nodes themselves. \uwds
 represents geometric data as immutable data, labelled with their hash
 (preventing \textit{de facto} data duplication).  Nodes only store the hash
 corresponding to the desired geometric data, and the actual data is pulled from
-the server by the clients whenever they actually need it (for rendering for
+the server by the clients whenever they actually need it (rendering for
 instance).
 
 \subsubsection{Timelines}
 
 Complementing the spatial representation encapsulated in the scene graph, each
 world also store the world's \emph{timeline}. This data structure is shared
-and synchronized amongst the clients in the same way as the scene graph.
+and synchronised amongst the clients in the same way as the scene graph.
 Clients can record in the timeline both \emph{events} (duration-less states) and
 \emph{situations}, \ie states with a start time and a (possibly open-ended) end time.
 
@@ -355,7 +356,7 @@ performing action recognition.
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{uwds-screenshot}
-    \caption{Screenshot of the {\tt uwds view} 3D visualization and manipulation
+    \caption{Screenshot of the {\tt uwds view} 3D visualisation and manipulation
     tool. In this particular example, the 3D meshes have been pre-loaded using
     {\tt uwds load}. Their positions are then updated at run time using the
     robot's sensors and proprioception (joint state).}
@@ -378,7 +379,7 @@ a central server (the {\tt underworlded} daemon) and broadcasted to every other
 client connected to the same world.
 
 As previously mentioned, worlds are composite data structures comprising of a
-scene graph and a timeline. These data structures are synchronized using
+scene graph and a timeline. These data structures are synchronised using
 Google's gRPC message passing framework\footnote{\url{http://www.grpc.io/}}, ensuring
 high throughput, reliability and cross-platform/cross-language support. The \uwds
 API is specifically discussed hereafter, in section~\ref{api}.
@@ -389,7 +390,7 @@ including large geometric datasets, like meshes) in real-time. \uwds itself does
 not perform many CPU intensive tasks (CPU intensive processing tasks -- sensor
 fusion, physics simulation, etc. -- are performed by the clients themselves) and
 as such, the performance bottleneck is essentially the network's data
-throughput.  In that regard, one of the simple yet critical optimization
+throughput.  In that regard, one of the simple yet critical optimisation
 performed by \uwds is automatic caching of mesh data. Mesh data are not
 transmitted when nodes are updated; only a hash value of the mesh data. The
 client can then request the full data whenever they actually need it.
@@ -461,13 +462,13 @@ with underworlds.Context("walls_filter") as ctx:
 The \uwds package provides several standard clients to perform common tasks on
 \uwds networks.
 
-\subsubsection{3D Visualization and manipulation}
+\subsubsection{3D Visualisation and manipulation}
 
 Interestingly, while \uwds deals with 3D geometries and scenes, it does
 represent 3D entities purely as data structures: no visual representation is
 involved (and as such, the \uwds server and core libraries do not depend on any
 graphics library like OpenGL). However, for all practical purposes, the ability
-to visualize the content of a scene is desirable. \uwds provides a standard
+to visualise the content of a scene is desirable. \uwds provides a standard
 client, {\tt uwds view}, that performs real-time 3D rendering of worlds,
 using OpenGL (Figure~\ref{fig|uwds-view}).
 
@@ -480,7 +481,7 @@ Geometric data like meshes can be loaded into a world (or rather, into the whole
 network as geometric data are treated as immutable resources shared amongst all
 worlds) by simply sending an array of vertices and faces to the \uwds server.
 As such, any client can load 3D data that is automatically made available to the
-whole network. For example, an object recognition module recognizes a new
+whole network. For example, an object recognition module recognises a new
 object. It sends the mesh to the \uwds server and creates a new node which
 references the mesh. At the next frame update, the 3D viewer sees a new node
 referencing a yet unknown mesh. The viewer request the mesh data from the
@@ -511,7 +512,7 @@ between the clients and the worlds, as well as their activity.
     \label{fig|explorer}
 \end{figure}
 
-Specialized command-line tools are also available to list at run-time the worlds
+Specialised command-line tools are also available to list at run-time the worlds
 and their content ({\tt uwds ls}) or to display detailed informations on a
 specific node ({\tt uwds show}).
 
@@ -630,14 +631,14 @@ with underworlds.Context("Human PoV") as ctx:
     \centering
     \includegraphics[width=\linewidth]{l2tor-photo2}
     \caption{A user manipulating objects on top of a RFID mat (providing object
-    localization) with a NAO robot, while an operator monitors
+    localisation) with a NAO robot, while an operator monitors
     the interaction on a tablet that display an {\tt uwds view} client.}
 
     \label{fig|l2torexample}
 \end{figure}
 
 \uwds has been used within the European L2TOR project~\cite{belpaeme2015l2tor}
-in order to conceptualize and visualize the spatial relations and visibility of
+in order to conceptualise and visualise the spatial relations and visibility of
 the physical objects that participants interact with. In one of the scenarios of this
 project, participants are instructed by a NAO robot to manipulate a number of
 Duplo-like animals on top of a printed background paper which serves as a
@@ -660,7 +661,7 @@ participant.
 
 The interaction scenario requires a number of \uwds clients. The client are
 distributed across two computers (the robot and a Microsoft Windows-operated
-tablet) that communicate with each other in order to synchronize the worlds
+tablet) that communicate with each other in order to synchronise the worlds
 representations. Figure~\ref{fig|l2torarchitecture} illustrates the topology of
 the \uwds network, that consists in the following clients:
 
@@ -690,7 +691,7 @@ manipulations on a tablet computer instead of using physical objects. To
 accommodate this change, we replaced the object detection \uwds client with a 3D
 virtual object detection while the rest of the system remains the same.
 
-Finally, we are evaluating the use of a hybrid platform that utilizes both virtual and
+Finally, we are evaluating the use of a hybrid platform that utilises both virtual and
 physical objects at the same time. 
 
 
