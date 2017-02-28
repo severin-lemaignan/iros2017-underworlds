@@ -255,7 +255,7 @@ has not been proposed so far.
 approach to \textbf{represent and share multiple parallel representations of the
 world}. \uwds does so by permitting clients to clone existing worlds, modify
 them, and re-share them, without the cost of duplicating geometric data (as
-explained at section~\ref{design}). By organizing clients in a network
+explained in section~\ref{design}). By organizing clients in a network
 (Figure~\ref{fig|scene}), worlds can be made dependent on each other, resulting
 in a loosely-coupled modular approach to spatio-temporal world representation
 that we call \emph{cascading situation assessment}.
@@ -381,7 +381,7 @@ As previously mentioned, worlds are composite data structures comprising of a
 scene graph and a timeline. These data structures are synchronized using
 Google's gRPC message passing framework\footnote{\url{http://www.grpc.io/}}, ensuring
 high throughput, reliability and cross-platform/cross-language support. The \uwds
-API is specifically discussed hereafter, at section~\ref{api}.
+API is specifically discussed hereafter, in section~\ref{api}.
 
 
 \uwds is meant to broadcast complex environment representations (typically
