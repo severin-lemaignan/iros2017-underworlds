@@ -626,6 +626,7 @@ with underworlds.Context("Human PoV") as ctx:
 
 
 \section{Application Example}
+\label{application}
 
 \begin{figure}
     \centering
@@ -716,23 +717,75 @@ or gRPC (the later being the one used by \uwds).
 \subsection{Future work}
 \label{futurework}
 
-Representation of uncertainty
+As illustrated in section~\ref{application}, \uwds is already deployed and used
+on the field. Several features are however still under development.
 
-Representation of fields
+\subsubsection{Representation capabilities} as presented in
+section~\ref{design}, the current version of \uwds allows to represent
+\emph{objects}, \emph{abstract entities} like groups and \emph{perspectives}.
+\emph{Fields} are also part of the \uwds design, but are not yet implemented.
 
-Client libraries in more languages
+\paragraph*{Representation of fields} fields are commonly used to represent
+continuously-valued spatial entities. Fields might or might not be spatially
+bounded. Examples include the working space of a robot arm (spatially bounded),
+the field of view of a camera (spatially bounded), proxemics (potentially
+unbounded). We plan to represent fields in \uwds using the memory-efficient
+octomaps~\cite{hornung2013octomap}. Similarly to geometric data, octomaps
+will not be directly stored with the nodes (nodes will refer to them through 
+handles), but unlike geometric data, they will not be treated as immutable
+datasets by the server, permitting real-time updates.
+
+\paragraph*{Representation of uncertainty} currently node positions are 
+stored as $4\times4$ transformation matrices, relative to the node parent. This
+representation is efficient, and conveniently matches traditional representation
+systems (including ROS TF frames or OpenGL transformations). However, the explicit management
+of uncertainties is instrumental to many robotic applications, and we plan to
+add full support for position uncertainties to \uwds. We plan to add this
+support by adding a pose covariance matrix to the nodes, and equipping the
+different \uwds helper tools with corresponding support (like covariance
+ellipses visualisation in {\tt uwds view}).
+
+
+\subsubsection{Manipulation of representations} \uwds makes it possible to
+cheaply clone and modify multiple worlds. However, little is provided to
+jointly manipulate sets of worlds. In that regard, we plan to add a mechanism to
+efficiently \emph{compare} two worlds. This would permit a client
+to quickly identify modifications applied to a world, and could prove especially
+useful when combined with temporal events to answer questions like ``what has
+changed in the scene?''. Comparisons between worlds involves the definition of
+an efficient fuzzy \emph{diff} algorithm for 3D scene graphs, able to
+selectively ignore non-relevant micro displacements.
+
+\subsubsection{Implementation and Integration} finally, we plan to continue to
+improve the integration of \uwds into existing software architectures. A
+short-term goal is to provide excellent C++ support, with a high-level,
+user-friendly C++ client library. This is critical for a broader adoption of \uwds
+within the robot community. Support for other languages might follow, depending
+on demands and open-source contributions.
+
+In term of implementation, we are also investigating alternative back-ends that
+could compete with gRPC to provide the synchronisation mechanisms between
+clients. Due to the high-level nature of \uwds (a set of shared, tree-like data
+structures), the use of the GIT version control system is one particular (if
+unusual) option being studied. The scene graph would be represented as a
+hierarchy of directories, nodes would be files in these directories, creating
+new worlds would consist in creating a branch in the repository, and sharing
+would be supported through the usual pull/push GIT mechanisms. Initial
+prototyping shows that under the right conditions (in particular, an in-memory
+file system), performance is not an issue. Automatic conflicts resolution, on
+the other hand, might prove more challenging.
 
 
 \subsection{Conclusion}
 
 We have introduced \uwds, a novel framework for shared and composable
 spatio-temporal representations of a robot's world. The key contributions of our
-approach are: a composite data-structure for environment representation within a
+approach are: a composite data structure for environment representation within a
 robotic software architecture, made of a scene graph and a timeline; a mechanism
-to efficiently and transparently share this data-structure amongst a set of
+to efficiently and transparently share this data structure amongst a set of
 clients (the software modules of the robot); a cascading architecture permitting
 the explicit of representation of alternative states of the world while
-maintaining a network of dependencies amongst themselves; a typology of clients
+maintaining a network of dependencies; a typology of clients
 (\emph{root}, \emph{leaf}, \emph{filter}, \emph{transformer}) to systematically
 describe such a network of representations dependencies.
 
