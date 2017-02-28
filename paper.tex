@@ -158,6 +158,7 @@ internal 3D model with other external components. In contrast, \uwds focuses on
 offering a shared and distributed representation of the environment within the
 robot's software architecture.
 
+%CDW - Remove 'Besides'. I think you are trying to establish why uwds is not like previous work but I don't think that word quite works in there. Probably ok with just removing it.
 Work on distributed scene graphs~\cite{naef2003blue} has been previously applied
 to robotics to provide a shared 3D representation of the robot's environment
 (for instance, the \emph{Robot Scene Graph}~\cite{blumenthal2013scene} or the
@@ -192,6 +193,7 @@ representations} by Beetz~\cite{beetz2010towards}.
 %data is changing (\eg in the case of map building or object recognition).
 
 % JK: like software, the plural of middleware is middleware :)
+% CDW: I get the analogy with first-class citizens but perhaps better to replace with something like 'but is not a great strength' or 'but is not a highly developed feature'
 Traditional robotic middleware, like ROS, is not particularly well-suited to
 deal with these different needs: full geometric data can be represented, but are
 not first-class citizens (a basic task like displaying a 3D mesh at a dynamic
@@ -473,6 +475,7 @@ to visualise the content of a scene is desirable. \uwds provides a standard
 client, {\tt uwds view}, that performs real-time 3D rendering of worlds,
 using OpenGL (Figure~\ref{fig|uwds-view}).
 
+%CDW - brocasted -> broadcast
 This tool also supports basic object manipulations, that are broadcasted to the
 other \uwds clients connected to the same world.
 
