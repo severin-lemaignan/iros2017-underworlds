@@ -153,7 +153,7 @@ models of humans.  It is updated at run-time by the robot's sensors.
 Likewise, \uwds embeds a grounded amodal model of the environment, updated
 online from the robot's sensors (sensor fusion).
 
-However, {\sc Spark} is a monolithic module, that does not support sharing its
+However, {\sc Spark} is a monolithic module that does not support sharing its
 internal 3D model with other external components. In contrast, \uwds focuses on
 offering a shared and distributed representation of the environment within the
 robot's software architecture.
@@ -214,8 +214,8 @@ does not scale well.
 
 Another example pertains to geometric task planning: a geometric task planner
 typically needs to reason over hypothetical future states of the environment
-(``what happen if I move this glass onto that pile of books?'').  The planner
-generates many possible future states, that in turn might require further
+(``What happens if I move this glass onto that pile of books?'').  The planner
+generates many possible future states, which in turn might require further
 processing (for instance, running a physics simulation). Such a tool would
 benefit a flexible representation system, where models are derived from each
 other, with partial modifications and different timescales.
