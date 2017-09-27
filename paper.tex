@@ -110,7 +110,7 @@
     geometries) and timelines (for representation of temporal events). \uwds
     supports \emph{cascading} representations: the environment is viewed as a
     set of \emph{worlds} that can each have different spatial and temporal
-    granularities, and may depend on each other.  \uwds also provides a set of
+    granularities, and may inherit from each other.  \uwds also provides a set of
     high-level client libraries and tools to introspect and manipulate the
     environment models.
 
@@ -226,9 +226,9 @@ representations} by Beetz~\cite{beetz2010towards}.
 %real-time sharing of such datasets is non-trivial, particularly when the said
 %data is changing (\eg in the case of map building or object recognition).
 
-Traditional robotic middleware, like ROS, is not particularly well-suited to
+Traditional robotic middlewares, like ROS, are not particularly well-suited to
 deal with these different needs: full geometric data can be represented, but are
-not first-class citizens (a basic task like displaying a 3D mesh at a dynamic
+not first-class citizens (a basic task like displaying a 3D mesh at an arbitrary
 position is not particularly easy to perform with ROS) and critically,
 representing and reasoning on alternative states of the environment is not
 directly feasible.
@@ -352,7 +352,7 @@ and model branching.
 
 Worlds contain both a geometric model and a temporal model. The geometric
 model is represented as a scene graph. The scene graph has a unique root node,
-in which a tree of other nodes is parented.
+to which a tree of other nodes is parented.
 
 Nodes in an \uwds scene graph have four possible types: \textbf{objects} that
 represent concrete physical objects (typically with one or several associated 3D
@@ -367,10 +367,10 @@ Every node has a unique ID, a parent, a 3D transformation relative to the parent
 and an optional name. \emph{Object} nodes optionally store as well pointers to
 their associated meshes. Importantly, mesh data (or other geometric datasets
 like point clouds) are \emph{not} stored within the nodes themselves. \uwds
-represents geometric data as immutable data, labelled with their hash
+represents geometric data as immutable data, identified by their hash value
 (preventing \textit{de facto} data duplication).  Nodes only store the hash
 corresponding to the desired geometric data, and the actual data is pulled from
-the server by the clients whenever they actually need it (rendering for
+the server by the clients whenever they actually need it (for rendering for
 instance).
 
 \subsubsection{Timelines}
@@ -391,7 +391,7 @@ performing action recognition.
     \centering
     \includegraphics[width=\linewidth]{uwds-screenshot}
     \caption{Screenshot of the {\tt uwds view} 3D visualisation and manipulation
-    tool. In this particular example, the 3D meshes have been pre-loaded using
+    client. In this particular example, the 3D meshes have been pre-loaded using
     {\tt uwds load}. Their positions are then updated at run-time using the
     robot's sensors and proprioception (joint state).}
     \label{fig|uwds-view}
@@ -441,9 +441,9 @@ As mentioned, \uwds uses Google's gRPC as message passing protocol. The protocol
 is explicitly defined (using the \emph{protocol
 buffers}\footnote{\url{https://developers.google.com/protocol-buffers/}}
 interface definition language), and bindings to various languages and platforms
-can be automatically generated from the protocol definition file (as of Feb
+can be automatically generated from the protocol definition file (as of Sept
 2017, gRPC can generate bindings for C, C++, C\#, Node.js, PHP, Ruby, Python, Go
-and Java, on Windows, Mac and Linux).  The cross-platform/cross-language support
+and Java, on Windows, Mac, Linux and Android).  The cross-platform/cross-language support
 of gRPC is especially welcome in the academic context, as it offers ease and
 flexibility to plug a variety of pre-existing components into an \uwds network.
 
@@ -507,8 +507,8 @@ to visualise the content of a scene is desirable. \uwds provides a standard
 client, {\tt uwds view}, that performs real-time 3D rendering of worlds,
 using OpenGL (Figure~\ref{fig|uwds-view}).
 
-This tool also supports basic object manipulations, that are broadcast to the
-other \uwds clients connected to the same world.
+This tool also supports basic object manipulations (translations, rotations),
+that are broadcast to the other \uwds clients connected to the same world.
 
 \paragraph*{Assets loading}
 
@@ -595,7 +595,7 @@ between objects (Figure~\ref{fig|spatialrelations}).
 \uwds also implements an efficient algorithm to assess object visibility from a
 specific viewpoint (\ie from a given \emph{perspective} node). The algorithm (color
 picking) enables fast (single pass) computation of the visibility of every
-object in the scene, while providing control regarding how many pixels should actually be
+object in the scene, while providing control regarding how many pixels should be actually
 visible for the object to be considered globally visible. The
 command-line tool {\tt uwds visibility} returns the list of visible objects from
 the point of view of each camera in a given world, and \uwds also provides the
