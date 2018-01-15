@@ -201,9 +201,11 @@ representations} by Beetz~\cite{beetz2010towards}.
 %data is changing (\eg in the case of map building or object recognition).
 
 Traditional robotic middlewares, like ROS, are not particularly well-suited to
-deal with these different needs: full geometric data can be represented, but are
-not first-class citizens (a basic task like displaying a 3D mesh at an arbitrary
-position is not particularly easy to perform with ROS) and critically,
+deal with these different needs: full geometric data can be represented, but is
+not first-class citizen (a basic task like displaying a 3D mesh at an arbitrary
+position is not particularly easy to perform with ROS, requiring the combination
+of static Collada meshes, a URDF kinematic description, TF broadcasters, and a
+3D visualisation tool like RViz) and critically,
 representing and reasoning on alternative states of the environment is not
 directly feasible.
 
