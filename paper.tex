@@ -5,6 +5,8 @@
 \usepackage[numbers]{natbib}
 
 \usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
 \usepackage{booktabs} % For formal tables
 
 \usepackage{multicol}
@@ -29,6 +31,14 @@
 \newcommand{\cf}{cf.\xspace}
 
 \newcommand{\uwds}{{\sc underworlds}\xspace}
+
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\DeclareMathOperator{\transform}{\odot}
+\DeclareMathOperator{\filter}{\ominus}
+\DeclareMathOperator{\W}{\mathcal{W}}
+
 
 \graphicspath{{figs/}}
 
@@ -274,6 +284,48 @@ that we call \emph{cascading situation assessment}.
 
 \section{Design and Architecture}
 \label{design}
+
+\subsection{Formal description}
+
+An \uwds \emph{world} $\W^k$ consists in a pair $\{\mathcal{S}^k,
+\mathcal{T}^k\}$.
+
+$\mathcal{S}^k=\{N^k, T^k\}$ is a tree representing a spatial
+scene (\emph{scene graph}), with $N^k$ the set of nodes and $T^k$ the set of
+transformations between the nodes. $|T^k| = |N^k| - 1$ and $n^k_0 \in N^k$ is
+called the root node of the scene $\mathcal{S}^k$.
+
+$\mathcal{T}^k=\{Evt^k, Sit^k\}$ is the world's \emph{timeline}, consisting in a
+set $Evt^k$ of events (duration-less states) and a set $Sit^k$ of sitations
+(states with a start time and an option end time).
+
+\uwds \emph{transformations} $\transform$ are operators that transform one world into
+another. They are often unary operator (for instance, $\mathcal{W}^{k'} =
+\transform\mathcal{W}^k$), but do not have to. \emph{Filters} (noted $\filter$)
+are a common type of unary, antiextensive transformations such as
+$\filter\mathcal{W}^k \subseteq \mathcal{W}^k$.
+
+An \uwds \emph{network} $\mathcal{N} = \{W, O\}$ is a directed graph (cycles are
+permitted) of worlds $W=\{\mathcal{W}^k\}, k\in0\ldots n$ and operators
+$O=\{\transform^l\}, l \in 0\ldots m$.
+
+\begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 5cm/#1,
+    level distance = 1.5cm}] 
+    \node {$\mathcal{W}^0$ {\tt\footnotesize base}}
+    child{ node  {$\W^1$ {\tt\footnotesize corrected}} edge from parent node[above left] {$\filter$}
+            child{ node {$\W^2$ {\tt\footnotesize semantic\_map}} 
+                child{ node {}} %for a named pointer
+                            child{ node {}}
+            }
+            child{ node  {$\W^3$ {\tt\footnotesize post\_planning}}
+                            child{ node {}}
+                            child{ node {}}
+            }                            
+    }
+    ; 
+\end{tikzpicture}
+
+
 
 \subsection{Cascading architecture}
 
