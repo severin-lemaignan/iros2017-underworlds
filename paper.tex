@@ -688,8 +688,27 @@ with underworlds.Context("Human PoV") as ctx:
 \end{listing}
 
 
-\section{Application Example}
+\section{Performances and Application Example}
 \label{application}
+
+\subsection{Performances}
+\label{performances}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{performances}
+    \caption{Propagation times of one change (node creation)
+    across $n$ worlds. The test is performed by running $n-1$ pass-through
+    filters (independent processes) which each monitor one world and replicate
+    any change into the next world. Times measured over 20 trials, performed on
+    a 8 core machine.}
+    \label{fig|performances}
+\end{figure}
+
+The main performance metric of \uwds is the \emph{propagation time}: the time is
+take of a change in a given world to cascade to all the dependant 
+
+\subsection{Application to service robots and human-robot interaction}
 
 \begin{figure}
     \centering
@@ -715,7 +734,7 @@ the house.  To assess the performance, the robot and the operator need to
 compute spatial relationships between objects from the visual perspective of the
 participant.
 
-\subsection*{Architecture}
+\subsection{Architecture}
 
 \begin{figure}
     \centering
