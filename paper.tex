@@ -214,7 +214,7 @@ representations} by Beetz~\cite{beetz2010towards}.
 %real-time sharing of such datasets is non-trivial, particularly when the said
 %data is changing (\eg in the case of map building or object recognition).
 
-Traditional robotic middlewares, like ROS, are not particularly well-suited to
+Traditional robotic middlewares, like ROS, are not particularly well suited to
 deal with these different needs: full geometric data can be represented, but is
 not first-class citizen (a basic task like displaying a 3D mesh at an arbitrary
 position is not particularly easy to perform with ROS, requiring the combination
@@ -278,7 +278,7 @@ has not been proposed so far.
 
 \uwds addresses this need and the main contribution of this work is a generic
 approach to \textbf{represent and share multiple parallel representations of the
-world}. \uwds does so by permitting clients to clone existing worlds, modify
+world}. \uwds does so by allowing clients to clone existing worlds, modify
 them, and re-share them, without the cost of duplicating geometric data (as
 explained in section~\ref{design}). By organising clients in a network
 (Figure~\ref{fig|scene}), worlds can be made dependent on each other, resulting
@@ -339,34 +339,40 @@ processes are hereafter called \emph{clients} of the \uwds network.
 %
 
 
-\subsection{Cascading architecture}
+\subsection{Software architecture}
 
-Figure~\ref{fig|scene} pictures a typical \uwds topology: a graph (that
-happens to be a directed acyclic graph on Figure~\ref{fig|scene}, but does not
-have to be in the general case -- cycles are permitted) of \emph{clients}
-connected through shared data structures called \emph{worlds}.
+Figure~\ref{fig|scene} pictures a typical \uwds topology: a graph (that happens
+to be an \emph{acyclic} graph on Figure~\ref{fig|scene}, but does not have to
+be in the general case) of worlds and operators connecting the worlds together.
+In the following, we however tend to adopt a software engineering perspective,
+in which the \uwds network is made of \emph{clients} (which implement the
+operators) connected through shared data structures called \emph{worlds}.
+The formal model and this engineering-oriented model are isomorphic.
 
 \subsubsection{Clients}
 
-Software components accessing \uwds worlds are called clients. Some standard
-clients (like a 3D visualisation tool) are provided with the \uwds package (see
-section~\ref{std_clients}). Clients are otherwise written by the end users
-using the \uwds client API (see section~\ref{api}).
+Software components implementing \uwds operators and accessing worlds are
+called clients. Some standard clients (like a 3D visualisation tool) are
+provided with the \uwds package (see section~\ref{std_clients}). Clients are
+otherwise written by the end users using the \uwds client API (see
+section~\ref{api}).
 
 Clients can both read and write onto the worlds they are connected to, and
 automatically see updates broadcast by other clients connected to the same
-world.
+world. To ensure data consistency, worlds can have many simultaneous readers,
+but only one writer at a given time.
 
-Four specific types of clients can be distinguished: \textbf{root clients} which
-create and update worlds (`write-only' client, like the \emph{Sensor fusion} and
-\emph{ROS interface} clients in Figure~\ref{fig|scene}); \textbf{leaf clients}
-which on the contrary only read worlds, without modifying them (like the
-\emph{Computation of spatial relations} client on Figure~\ref{fig|scene});
-\textbf{filters} that copy an input world into an output world, performing
-some filtering operation in-between (like the client \textit{Physics-based
-position correction}); and \textbf{transformers} which transform one
-representation into another (like the \emph{Semantic mapping} client on
-Figure~\ref{fig|scene}).
+Three specific types of clients can be distinguished: \textbf{generator
+clients} which implement generator operators, and create and update worlds
+(`write-only' client, like the \emph{Sensor fusion} and \emph{ROS interface}
+clients in Figure~\ref{fig|scene}); \textbf{leaf clients} which on the contrary
+only read worlds, without modifying them (like the \emph{Computation of spatial
+relations} client on Figure~\ref{fig|scene}); and \textbf{transformers} which
+transform one representation into another (like the \emph{Semantic mapping}
+client on Figure~\ref{fig|scene}). \textbf{Filters} are a specfic class of
+transformer clients that copy an input world into an output world, performing some
+filtering operation in-between (like the client \textit{Physics-based position
+correction}).
 
 \subsubsection{Worlds}
 
@@ -374,19 +380,22 @@ Worlds are effectively distributed data structures composed of a scene graph
 representing the 3D geometry of the environment, and a timeline storing temporal
 events.
 
-Each world is technically independent from all others. Dependencies between
-worlds arise from the clients' connections. For instance, filters effectively
-create a dependency between worlds. On Figure~\ref{fig|scene}, the \textit{Physics-based
-position correction} client creates a dependency between the world {\tt base} (which
-represents here the result of raw sensor fusion) and the world {\tt corrected}
-which would be a physically-consistent copy of {\tt base}.
-As a result, an \uwds network can be seen as a dependency graph between worlds (where
-cyclic dependencies are permissible).
+While each world is technically independent from all the others, dependencies
+(and therefore, coupling) arise between worlds from the clients' connections.
+For instance, filters effectively create a dependency between worlds. On
+Figure~\ref{fig|scene}, the \textit{Physics-based position correction} client
+creates a dependency between the world {\tt base} (which represents here the
+result of raw sensor fusion) and the world {\tt corrected} which would be a
+physically-consistent copy of {\tt base}.  As a result, an \uwds network can
+also be seen as a dependency graph between worlds (where cyclic dependencies
+are permissible).
 
 This architecture enables what we call \emph{cascading situation assessment}:
-independent software components (the clients) build, refine and share successive
-models of the environment by a combination of filtering/transformations steps
-and model branching.
+independent software components (the clients) build, refine and share
+successive models of the environment by a combination of
+filtering/transformations steps and model branching. A change performed by one
+client (for instance, a face tracker updates the pose of the human head) may
+thereby \emph{cascade} to each of the downstream, dependent worlds.
 
 \subsubsection{Scenes}
 
