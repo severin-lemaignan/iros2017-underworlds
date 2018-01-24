@@ -713,73 +713,32 @@ take of a change in a given world to cascade to all the dependant
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{l2tor-photo2-blind}
-    \caption{A user manipulating objects on top of an RFID mat (providing object
-    localisation) with a NAO robot, while an operator monitors
-    the interaction on a tablet that displays an {\tt uwds view} client [photo blurred for blind review].}
-
-    \label{fig|l2torexample}
+    \caption{TODO LAAS: update photo -> MuMMER picture?}
+    \label{fig|mummer-example}
 \end{figure}
 
-%\uwds has been used within the European L2TOR project~\cite{belpaeme2015l2tor}
+%\uwds has been used within the European MuMMER project
 \uwds has been used within the [hidden for blind review] project
 in order to conceptualise and visualise the spatial relations and visibility of
-the physical objects that participants interact with. In one of the scenarios of this
-project, participants are instructed by a NAO robot to manipulate a number of
-Duplo-like animals on top of a printed background paper which serves as a
-landscape (Figure~\ref{fig|l2torexample}). The robot instructions are based on
-pedagogical strategies to promote spatial relation learning by object
-manipulation. Such instructions include commands to place the elephant
-\textit{on top} or \textit{next to} the cube, or put the giraffe \textit{inside}
-the house.  To assess the performance, the robot and the operator need to
-compute spatial relationships between objects from the visual perspective of the
-participant.
+the physical objects that participants interact with.
 
-\subsection{Architecture}
+TODO LAAS
 
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{l2tor}
-    %\caption{Schema of the \uwds architecture used in the L2TOR project. }
-    \caption{Schema of the \uwds architecture used in the [hidden for blind review] project. }
-    \label{fig|l2torarchitecture}
+    %\caption{Schema of the \uwds architecture used in the MuMMER project. }
+    \caption{TODO LAAS update archi -- Schema of the \uwds architecture used in the [hidden for blind review] project. }
+    \label{fig|mummerarchitecture}
 \end{figure}
 
 The interaction scenario requires a number of \uwds clients. The clients are
-distributed across two computers (the robot and a Microsoft Windows-operated
-tablet) that communicate with each other in order to synchronise the world
-representations. Figure~\ref{fig|l2torarchitecture} illustrates the topology of
-the \uwds network, that consists in the following clients:
+distributed across...
 
-\begin{itemize}
-    \item \textbf{Kinect Head Tracker}: captures the location and the direction
-        of the user's head -- maintains the {\tt human} \emph{Perspective} node;
+Figure~\ref{fig|mummerarchitecture} illustrates the topology of
+the \uwds network...
 
-    \item \textbf{Object RFID tracker}: updates the locations of the virtual
-        objects based on RFID data;
-
-    \item \textbf{NAO joint state publisher}: virtual representation of the
-        robot -- maintains the {\tt robot} \emph{Perspective} node;
-
-    \item \textbf{Visibility computation}: computes visibility based on
-        \emph{Perspective} nodes;
-
-    \item \textbf{Spatial relations computation}: extracts symbolic spatial relations
-        between the virtual objects;
-
-    \item \textbf{Game/Rules computation}: interaction manager based on \uwds
-        clients' input.
-
-\end{itemize}
-
-%The L2TOR project features an additional scenario where the user performs the
-The [hidden for blind review] project features an additional scenario where the user performs the
-manipulations on a tablet computer instead of using physical objects. To
-accommodate this change, we replaced the object detection \uwds client with a 3D
-virtual object detection while the rest of the system remains the same.
-
-Finally, we are evaluating the use of a hybrid platform that utilises both virtual and
-physical objects at the same time. 
-
+TODO LAAS
 
 \section{Discussion and Conclusion}
 
