@@ -486,9 +486,9 @@ hidden from the user, and managed instead by the \uwds client library.
 library is under development).  Listing~\ref{lst|pythonapi} gives a complete
 example of an \uwds client performing simple filtering: the client continuously
 listens for changes in an input world, removes some objects (in this case, items
-whose name contain the string ``{\tt wall}''), and forwards all other changes to
+whose volume is below a threshold), and forwards all other changes to
 an output world, effectively making the output world a copy of the input world
-with all walls removed.
+with all smaller objects removed.
 
 \begin{listing}[h!]
 
@@ -496,7 +496,7 @@ with all walls removed.
 import underworlds
 
 # by default, connect to the server on localhost
-with underworlds.Context("walls_filter") as ctx:
+with underworlds.Context("small_object_filter") as ctx:
 
     in_world = ctx.worlds["example_in"]
     out_world = ctx.worlds["example_out"]
@@ -506,15 +506,15 @@ with underworlds.Context("walls_filter") as ctx:
         in_world.scene.waitforchanges()
 
         for node in in_world.scene.nodes:
-            if("wall" not in node.name):
+            if node.volume > THRESHOLD:
                 out_world.scene.nodes.update(node)
 
 
 \end{pythoncode}
     \caption{Example of a simple yet complete \uwds filter, written in Python:
-    the client connects to the \uwds network, walks through the scene graph of
-    world {\tt example\_in}, filters out some objects, and publishes the
-    remaining objects in the world {\tt example\_out}.}
+    the client connects to the \uwds network, blocks until the world {\tt
+    example\_in} changes, and only propagate nodes that match the condition to
+    the world {\tt example\_out}.}
 
     \label{lst|pythonapi}
 \end{listing}
