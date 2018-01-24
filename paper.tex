@@ -6,9 +6,9 @@
 
 \usepackage{graphicx}
 \usepackage{tikz}
-\usetikzlibrary{arrows}
+\usetikzlibrary{graphs,graphdrawing,arrows}
+\usegdlibrary{trees, layered}
 \usepackage{booktabs} % For formal tables
-
 \usepackage{multicol}
 \usepackage[bookmarks=true]{hyperref}
 
@@ -35,9 +35,13 @@
 
 \usepackage{amssymb}
 \usepackage{amsmath}
-\DeclareMathOperator{\transform}{\odot}
-\DeclareMathOperator{\filter}{\ominus}
+\DeclareMathOperator{\op}{\odot}
+\DeclareMathOperator{\filter}{\otimes}
+\DeclareMathOperator{\generator}{\oplus}
+\DeclareMathOperator{\consumer}{\ominus}
 \DeclareMathOperator{\W}{\mathcal{W}}
+\DeclareMathOperator{\Ws}{\boldsymbol{W}}
+\DeclareMathOperator{\Os}{\boldsymbol{O}}
 
 
 \graphicspath{{figs/}}
@@ -287,44 +291,52 @@ that we call \emph{cascading situation assessment}.
 
 \subsection{Formal description}
 
-An \uwds \emph{world} $\W^k$ consists in a pair $\{\mathcal{S}^k,
+An \uwds \emph{world} $\W^k \in \Ws$ consists in a pair (\emph{scene}, \emph{timeline}),
+noted $\{\mathcal{S}^k,
 \mathcal{T}^k\}$.
 
-$\mathcal{S}^k=\{N^k, T^k\}$ is a tree representing a spatial
-scene (\emph{scene graph}), with $N^k$ the set of nodes and $T^k$ the set of
-transformations between the nodes. $|T^k| = |N^k| - 1$ and $n^k_0 \in N^k$ is
-called the root node of the scene $\mathcal{S}^k$.
+$\mathcal{S}^k=\{N^k, T^k\}$ is a tree representing a spatial scene (\emph{scene
+graph}), with $N^k$ the set of nodes and $T^k$ the set of 6D geometric
+transformations between the nodes ($|T^k| = |N^k| - 1$). $n^k_0 \in N^k$ is
+called the \emph{root node} of the scene $\mathcal{S}^k$.
 
 $\mathcal{T}^k=\{Evt^k, Sit^k\}$ is the world's \emph{timeline}, consisting in a
-set $Evt^k$ of events (duration-less states) and a set $Sit^k$ of sitations
+set of events $Evt^k$ (duration-less states) and a set of situations $Sit^k$
 (states with a start time and an option end time).
 
-\uwds \emph{transformations} $\transform$ are operators that transform one world into
-another. They are often unary operator (for instance, $\mathcal{W}^{k'} =
-\transform\mathcal{W}^k$), but do not have to. \emph{Filters} (noted $\filter$)
-are a common type of unary, antiextensive transformations such as
-$\filter\mathcal{W}^k \subseteq \mathcal{W}^k$.
+\uwds \emph{operators} (noted $\op\colon \Ws^{0\ldots m} \rightarrow
+\Ws^{0\ldots n}$) transform one world into another. Examples of operators
+include \emph{filters} (noted $\filter$), a common type of unary, antiextensive
+transformations such as $\filter\W^k \subseteq \W^k$, and \emph{generators}
+(noted $\generator$), a class of nullary operators that are used to create new
+worlds (for instance, from perception routines).
 
-An \uwds \emph{network} $\mathcal{N} = \{W, O\}$ is a directed graph (cycles are
-permitted) of worlds $W=\{\mathcal{W}^k\}, k\in0\ldots n$ and operators
-$O=\{\transform^l\}, l \in 0\ldots m$.
+Finally, an \uwds \emph{network} $\mathcal{N} = \{\Ws, \Os\}$ is a directed graph (cycles are
+permitted) of worlds $\Ws=\{\W^k\}, k\in0\ldots n$ and operators
+$\Os=\{\op^l\}, l \in 0\ldots m$. As described in the following sections,
+operators are typically implemented as independent software processes that connect at
+runtime to their operands, \ie the \uwds worlds, to read and write them. These
+processes are hereafter called \emph{clients} of the \uwds network.
 
-\begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 5cm/#1,
-    level distance = 1.5cm}] 
-    \node {$\mathcal{W}^0$ {\tt\footnotesize base}}
-    child{ node  {$\W^1$ {\tt\footnotesize corrected}} edge from parent node[above left] {$\filter$}
-            child{ node {$\W^2$ {\tt\footnotesize semantic\_map}} 
-                child{ node {}} %for a named pointer
-                            child{ node {}}
-            }
-            child{ node  {$\W^3$ {\tt\footnotesize post\_planning}}
-                            child{ node {}}
-                            child{ node {}}
-            }                            
-    }
-    ; 
-\end{tikzpicture}
-
+%As an example, Figure~\ref{fig|formal-net} shows the
+%formal model of the \uwds network represented in Figure~\ref{fig|scene}.
+%
+%\begin{figure}[!h]
+%    \centering
+%    \begin{tikzpicture}[nodes={text height=0.4cm,align=center,text width=1.5cm,
+%                    draw=black!20, thick, fill=white, font=\footnotesize},
+%                        tr/.style={draw=none,text width=0.3cm},
+%                        >=stealth', rounded corners, semithick]
+%\graph [layered layout, grow=right, level distance=0.5cm, sibling sep=.5em, sibling distance=1cm] {
+%    "$\W^0$ {\tiny\tt base}" -- "$\filter^0$"[tr] -> "$\W^1$ {\tiny\tt corrected}";
+%        "$\W^1$ {\tiny\tt corrected}" -- "$\op^2$"[tr] -> "$\W^3$ {\tiny\tt post\_planning}";
+%        "$\W^1$ {\tiny\tt corrected}" -- "$\op^1$"[tr] -> "$\W^2$ {\tiny\tt semantic\_mapping}";
+%};
+%\end{tikzpicture}
+%\caption{}
+%    \label{fig|formal-net}
+%\end{figure}
+%
 
 
 \subsection{Cascading architecture}
