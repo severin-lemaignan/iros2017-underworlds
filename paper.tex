@@ -460,7 +460,6 @@ perspective, the environment model is manipulated as a local data structure (see
 Listing~\ref{lst|pythonapi}). Modifications to the model are asynchronously synchronised with
 a central server (the {\tt underworlded} daemon) and broadcast to every other
 client connected to the same world.
-% JK: underworlded - intentional? (I guess yes, but checking)
 
 As previously mentioned, worlds are composite data structures comprised of a
 scene graph and a timeline. These data structures are synchronised using
@@ -490,8 +489,8 @@ As mentioned, \uwds uses Google's gRPC as message passing protocol. The protocol
 is explicitly defined (using the \emph{protocol
 buffers}\footnote{\url{https://developers.google.com/protocol-buffers/}}
 interface definition language), and bindings to various languages and platforms
-can be automatically generated from the protocol definition file (as of Sept
-2017, gRPC can generate bindings for C, C++, C\#, Node.js, PHP, Ruby, Python, Go
+can be automatically generated from the protocol definition file (as of Jan
+2018, gRPC can generate bindings for C, C++, C\#, Node.js, PHP, Ruby, Python, Go
 and Java, on Windows, Mac, Linux and Android).  The cross-platform/cross-language support
 of gRPC is especially welcome in the academic context, as it offers ease and
 flexibility to plug a variety of pre-existing components into an \uwds network.
