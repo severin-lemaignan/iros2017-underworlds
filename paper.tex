@@ -470,6 +470,16 @@ transmitted when nodes are updated; only a hash value of the mesh data. The
 client can then request the full data whenever it is actually needed.
 
 
+\subsection{Time and space complexity}
+
+With $n$ the number of worlds and $m$ the number of operators in a network
+$\mathcal{N}$, the worst-case (when every world is a parameter of every
+operator) time complexity of creating or updating a node and propagating the
+change across the network is $O(n \times m)$. This effectively corresponds to
+the server performing $n \times m$ requests.  The space complexity is the same
+(as clients own a copy of the worlds they monitor), except for mesh data whose
+complexity is $O(1)$ (only the server stores the mesh data).
+
 
 \section{API \& Clients}
 
