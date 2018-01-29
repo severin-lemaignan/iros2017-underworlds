@@ -470,16 +470,29 @@ transmitted when nodes are updated; only a hash value of the mesh data. The
 client can then request the full data whenever it is actually needed.
 
 
-\subsection{Time and space complexity}
+\subsection{Time and space complexity analysis}
 
-With $n$ the number of worlds and $m$ the number of operators in a network
-$\mathcal{N}$, the worst-case (when every world is a parameter of every
+\uwds is fundamentally about distributing two datastructures: a scene graph
+(with nodes representing spatial entities) and a timeline (where events are
+stored as a flat list). Typical time and space complexities arise from these
+datastructures. In typical usage scenarios (where the number of nodes or events
+remain relatively small), the computational load to manipulate these
+datastructures is however dominated by the actual processings performed by the
+clients with the data.
+
+More interesting is the time complexity of distributing changes across an \uwds
+network. With $n$ the number of worlds and $m$ the number of operators in a
+network $\mathcal{N}$, the worst-case (when every world is a parameter of every
 operator) time complexity of creating or updating a node and propagating the
-change across the network is $O(n \times m)$. This effectively corresponds to
-the server performing $n \times m$ requests.  The space complexity is the same
-(as clients own a copy of the worlds they monitor), except for mesh data whose
-complexity is $O(1)$ (only the server stores the mesh data).
+change across the network is $O(n \times m)$ (this effectively corresponds to
+the \uwds server performing $n \times m$ requests to notify clients of the
+update).  The space complexity is the same (as clients own a full copy of the
+worlds they monitor), except for mesh data whose space and time complexities are
+$O(1)$ (only the server stores the mesh data).
 
+In the common case of one client performing a full update of a single world
+(with $p$ nodes) at each time step, the complexity of propagating these changes across
+the network would be $O(p \times m)$.
 
 \section{API \& Clients}
 
