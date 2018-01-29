@@ -239,8 +239,8 @@ other, with partial modifications and different timescales.
 A third example relates to human-robot interaction scenarios where \emph{perspective
 taking} is important (a prototypical example being the game `I spy with my
 little eye', as implemented in~\cite{ros2010which}). Perspective taking is a
-cognitive skill that relies on the ability for an agent to project itself in
-others' `eyes' to estimate what they see from their perspectives. 
+cognitive skill that relies on the ability for an agent to take someone else's
+point of view to estimate what they see from their perspectives. 
 Perspective taking has previously been implemented in robotics by temporarily placing
 virtual cameras at eye locations for each of the humans tracked by the
 robot~\cite{ros2010solving}. While acceptable for simple cases, such an approach
@@ -258,10 +258,10 @@ processed}~\cite{vonfintel2008presupposition}. In the context of spatio-temporal
 representations, we call pre-supposition accommodation the ability of an agent
 to adjust its model so that it matches some contextual constraint. For instance,
 if A tells B to ``catch the red balloon behind you'', B might create a
-representation of an imaginary red balloon, placed behind him, even without
+representation of an imaginary red balloon, placed behind her, even without
 actually observing the balloon: B \emph{accommodates} the \emph{pre-supposition}
-of a red balloon being present behind himself. Endowing robots with this
-capability has been touched upon by Mavridis \etal within their multi-modal
+of a red balloon being present behind herself. Endowing robots with this
+capability has been touched upon by Mavridis~\etal within their multi-modal
 \emph{Grounded Situation Model}~\cite{Mavridis2006}. However, to the best of our
 knowledge, a general framework which would enable robots to accommodate spatial
 and temporal pre-suppositions by deriving imaginary worlds from existing ones
@@ -332,7 +332,7 @@ processes are hereafter called \emph{clients} of the \uwds network.
 
 \subsection{Software architecture}
 
-Figure~\ref{fig|scene} pictures a typical \uwds topology: a graph (that happens
+Figure~\ref{fig|scene} depicts a typical \uwds topology: a graph (that happens
 to be an \emph{acyclic} graph on Figure~\ref{fig|scene}, but does not have to
 be in the general case) of worlds and operators connecting the worlds together.
 In the following, we however tend to adopt a software engineering perspective,
