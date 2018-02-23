@@ -1,10 +1,20 @@
-\documentclass[conference]{IEEEtran}
-\usepackage{times}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
 
-% numbers option provides compact numerical references in the text. 
-\usepackage[numbers]{natbib}
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf} 
 
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+\usepackage[utf8x]{inputenc}
 \usepackage{graphicx}
+
+
 \usepackage{tikz}
 \usetikzlibrary{graphs,graphdrawing,arrows}
 \usegdlibrary{trees, layered}
@@ -51,36 +61,27 @@
 
 \begin{document}
 
-\title{{\sc underworlds}: Cascading Situation Assessment for Robots
+\title{\LARGE \bf
+{\sc underworlds}: Cascading Situation Assessment for Robots
 }
 
 
-
-
-\author{Author Names Omitted for Anonymous Review. Paper-ID [add your ID here]}
-
-%\author{\authorblockN{Séverin Lemaignan}
-%\authorblockA{Centre for Robotics and Neural Systems\\
-%University of Plymouth\\
-%Plymouth, United Kingdom\\
-%Email: severin.lemaignan@plymouth.ac.uk}
-%\and
-%\authorblockN{Yoan Sallami, Aurélie Clodic and Rachid Alami}
-%\authorblockA{Twentieth Century Fox\\
-%Springfield, USA\\
-%Email: homer@thesimpsons.com}
-%\and
-%\authorblockN{James Kirk\\ and Montgomery Scott}
-%\authorblockA{Starfleet Academy\\
-%San Francisco, California 96678-2391\\
-%Telephone: (800) 555--1212\\
-%Fax: (888) 555--1212}}
+\author{Séverin Lemaignan$^{1}$, Yoan Sallami$^{2}$, Christopher Wallbridge$^{1}$, Aurélie Clodic$^{2}$ and Rachid Alami$^{2}$%
+\thanks{$^{1}$Authors are with Centre for Robotics and Neural Systems,
+        Plymouth University, Plymouth PL48AA, United Kingdom
+        {\tt\small firstname.surname@plymouth.ac.uk},
+	$^{2}$Authors are with CNRS LAAS,
+        Toulouse, France
+        {\tt\small firstname.surname@laas.fr}}%
+}
 
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
 
 \begin{abstract}
 
@@ -101,16 +102,12 @@
 \end{abstract}
 
 
-\IEEEpeerreviewmaketitle
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
 
 \uwds is a distributed and lightweight open-source
-%framework \footnote{\url{https://github.com/severin-lemaignan/underworlds}} that
-framework \footnote{[GitHub URL hidden for blind review]} that
+framework \footnote{\url{https://github.com/underworlds-robot/underworlds}} that
 enables robot programmers to build and refine spatial and temporal
 models of the environment surrounding a robot in real-time. \uwds makes it possible to share
 these world models amongst the software components running on the robot.
@@ -760,8 +757,7 @@ take of a change in a given world to cascade to all the dependant
     \label{fig|mummer-example}
 \end{figure}
 
-%\uwds has been used within the European MuMMER project
-\uwds has been used within the [hidden for blind review] project
+\uwds has been used within the European MuMMER project
 in order to conceptualise and visualise the spatial relations and visibility of
 the physical objects that participants interact with.
 
@@ -770,8 +766,8 @@ TODO LAAS
 \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{l2tor}
-    %\caption{Schema of the \uwds architecture used in the MuMMER project. }
-    \caption{TODO LAAS update archi -- Schema of the \uwds architecture used in the [hidden for blind review] project. }
+    \caption{TODO LAAS update archi -- Schema of the \uwds architecture used in
+    the MuMMER project. }
     \label{fig|mummerarchitecture}
 \end{figure}
 
@@ -889,15 +885,12 @@ efforts like the RSG-DSL domain specific language~\cite{blumenthal2014towards}.
 
 \section*{Acknowledgment}
 
-%This work has been supported by the EU H2020 Marie Sk\l odowska-Curie Actions
-%project DoRoThy (grant 657227) and the EU H2020 L2TOR project (grant 688014).
+This work has been supported by the EU H2020 Marie Sk\l odowska-Curie Actions
+project DoRoThy (grant 657227),  the EU H2020 MuMMER project (grant TODO LAAS)
+and the EU H2020 L2TOR project (grant 688014).
 
-%The authors also acknowledge the contribution of the HRI lab of LAAS-CNRS (where this
-%work debuted), and in particular, the influential ideas of Rachid Alami.
 
-[Hidden for blind review]
-
-\bibliographystyle{plainnat}
+\bibliographystyle{IEEEtran}
 \bibliography{bibliography}
 
 
