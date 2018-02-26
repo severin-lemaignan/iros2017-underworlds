@@ -606,7 +606,7 @@ Blender)\footnote{The underlying import
 capability is provided by the {\sc assimp} library.
 \url{http://assimp.sourceforge.net/}}.
 
-\subsubsection{Physics simulation}
+\subsubsection{Physics simulation}\label{physics}
 
 TODO LAAS
 
@@ -781,11 +781,13 @@ participant.
     \label{fig|mummer-example}
 \end{figure}
 
-\uwds has been used within the European MuMMER project
-in order to conceptualise and visualise the spatial relations and visibility of
-the physical objects that participants interact with.
+%\uwds has been used within the European MuMMER project
+%in order to conceptualise and visualise the spatial relations and visibility of
+%the physical objects that participants interact with.
 
-TODO LAAS
+%TODO LAAS
+
+
 
 \begin{figure}
     \centering
@@ -801,13 +803,20 @@ TODO LAAS
     the MuMMER project. }
     \label{fig|mummerarchitecture}
 \end{figure}
-The interaction scenario requires a number of \uwds clients. The clients are
-distributed across...
+%The interaction scenario requires a number of \uwds clients. The clients are
+%distributed across...
 
 Figure~\ref{fig|mummerarchitecture} illustrates the topology of
-the \uwds network...
+the \uwds network. A first client \textit{env\_provider} provides the environment set-up and allows to build a first \texttt{ENV} world where static objects/furnitures and walls are present. 
+Then, the system cascades three worlds successively by the help of three clients. \textit{robot\_monitor} provides a first world where the robot is present. \textit{humans\_monitor} provides a new world where the humans are present. \textit{object\_monitor} provides a new world where the objects are present. At this end we obtain a world \texttt{BASE}.
 
-TODO LAAS
+This world \texttt{BASE} is then passed through a \textit{physics filter} client as explained in section \ref{physics} to obtain a \texttt{STABLE} world where all elements are present and consistent: robot, humans, objects and static environment. On this world, we use \textit{Computation of spatial relations} client to get information such as onTop, isIn or isAbove.
+
+This world \texttt{STABLE} is then used by a \textit{perspective filter} client to provide different perspectives given the monitored agent (in our case: human 1, human 2 or the robot itself). Besides giving a view of the input world in the perspective of the monitored agent, it aggregates all the information gathered by this agent. Consequently, it does not offer a snapshot of the agent belief at a particular time but an aggregated version along the time.
+
+
+
+
 
 \section{Discussion and Conclusion}
 
