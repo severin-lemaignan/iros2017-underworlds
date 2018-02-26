@@ -415,16 +415,16 @@ instance).
 \subsubsection{Timelines}
 
 Complementing the spatial representation encapsulated in the scene graph, each
-world also stores the world's \emph{timeline}. This data structure is shared
-and synchronised amongst the clients in the same way as the scene graph.
-Clients can record both \emph{events} (duration-less states) and
-\emph{situations} in the timeline, \ie states with a start time and a (possibly open-ended) end time.
+world also stores the world's \emph{timeline}. This data structure is shared and
+synchronised amongst the clients in the same way as the scene graph.  Clients
+can record and query both \emph{events} (duration-less states) and \emph{situations} in
+the timeline, \ie states with a start time and a (possibly open-ended) end time.
 
-Importantly, the \uwds server automatically generates a snapshot of
-the scene graph whenever an event or situation is added to the timeline. The
-snapshot is associated to the event, which allows clients to effectively retrieve past
-states of the world. This capability is anticipated to be primarily used by \uwds clients
-performing action recognition.
+%Importantly, the \uwds server automatically generates a snapshot of
+%the scene graph whenever an event or situation is added to the timeline. The
+%snapshot is associated to the event, which allows clients to effectively retrieve past
+%states of the world. This capability is anticipated to be primarily used by \uwds clients
+%performing action recognition.
 
 \begin{figure}
     \centering
@@ -492,7 +492,7 @@ $O(1)$ (only the server stores the mesh data).
 In the common case of one client performing a full update of a single world
 (with $p$ nodes) at each time step, the complexity of propagating these changes across
 the network would be $O(p \times m)$. Figure~\ref{fig|performances} shows
-measured propagation time for one change across 20 cascading worlds.
+measured propagation time for one change across up to 20 cascading worlds.
 
 \begin{figure}
     \centering
@@ -865,7 +865,8 @@ continuously-valued spatial entities. Fields might or might not be spatially
 bounded. Examples include the working space of a robot arm (spatially bounded),
 the field of view of a camera (spatially bounded), proxemics (potentially
 unbounded). We plan to represent fields in \uwds using the memory-efficient
-octomaps~\cite{hornung2013octomap}. Similarly to geometric data, octomaps
+octomaps~\cite{hornung2013octomap} or NDT-OM maps~\cite{saarinen20133d}.
+Similarly to geometric data,these datastructures
 will not be directly stored with the nodes (nodes will refer to them through 
 handles), but unlike geometric data, they will not be treated as immutable
 datasets by the server, permitting real-time updates.
