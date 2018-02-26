@@ -26,7 +26,7 @@ bib: $(TARGET:.tex=.aux)
 
 paper: $(TARGET) $(SVG:.svg=.pdf) $(DOT:.dot=.pdf) $(PLOT:.gnuplot=.eps)
 
-	lualatex -shell-escape $(TARGET)
+	pdflatex -shell-escape $(TARGET)
 
 # Check style:
 proof:
