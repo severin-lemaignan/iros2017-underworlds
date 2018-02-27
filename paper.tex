@@ -608,7 +608,10 @@ capability is provided by the {\sc assimp} library.
 
 \subsubsection{Physics simulation}\label{physics}
 
-TODO LAAS
+When perception modules provide objects localization, the consistency is not guarantee, objects on a table seem to slightly flight in the air, when dropping them in a bin the localization is not updated any more when the objects are occulted, resulting in objects that fly just above the bin.
+
+Being able to manage that issues by simulating the gravity is the purpose of a dedicated client  
+{\tt physics filter} that have been designed using Bullet RT physics simulation and pybullet \url{https://pybullet.org/} library, it provides from an input world, an output world where objects described by an URDF file are filtered by the simulator, which gives us the near future of the objects based on their position, mass and inertia.
 
 \subsubsection{Introspection and debugging}
 
@@ -774,6 +777,12 @@ participant.
 
 \subsection{Application to joint-action situations}
 
+Underworlds is used 
+%within the European MuMMER project
+to be able to assess visibility and knowledge about objects, places and agents within the scene.
+
+Let's imagine a little example with two humans and a robot looking at a table. On the table there is an object that is only seen by one human and the robot (it is hidden for the second human). Figure~\ref{fig|mummerarchitecture} illustrates the topology of the \uwds network we can define for this example. 
+
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{l2tor-photo2-blind}
@@ -806,17 +815,20 @@ participant.
 %The interaction scenario requires a number of \uwds clients. The clients are
 %distributed across...
 
-Figure~\ref{fig|mummerarchitecture} illustrates the topology of
-the \uwds network. A first client \textit{env\_provider} provides the environment set-up and allows to build a first \texttt{ENV} world where static objects/furnitures and walls are present. 
-Then, the system cascades three worlds successively by the help of three clients. \textit{robot\_monitor} provides a first world where the robot is present. \textit{humans\_monitor} provides a new world where the humans are present. \textit{object\_monitor} provides a new world where the objects are present. At this end we obtain a world \texttt{BASE}.
+A first client \textit{env\_provider} provides the environment set-up and allows to build a first \texttt{ENV} world where static objects/furnitures and walls are present. 
+Then, the system cascades three worlds successively by the help of three clients. \textit{robot\_monitor} provides a first world where the robot is present. \textit{humans\_monitor} provides a new world where the humans are present (using~\cite{Khalidov_Idiap-RR-02-2017}). \textit{object\_monitor} provides a new world where the objects are present (using {\tt ar\_track\_alvar}\footnote{\url{http://wiki.ros.org/ar\_track\_alvar}). At this end we obtain a world \texttt{BASE}.
 
-This world \texttt{BASE} is then passed through a \textit{physics filter} client as explained in section \ref{physics} to obtain a \texttt{STABLE} world where all elements are present and consistent: robot, humans, objects and static environment. On this world, we use \textit{Computation of spatial relations} client to get information such as onTop, isIn or isAbove.
+This world \texttt{BASE} is then passed through a \textit{physics filter} client as explained in section~\ref{physics} to obtain a \texttt{STABLE} world where all elements are present and consistent: robot, humans, objects and static environment. On this world, we use \textit{Computation of spatial relations} client to get information such as {\tt onTop}, {\tt isIn} or {\tt isAbove}.
 
-This world \texttt{STABLE} is then used by a \textit{perspective filter} client to provide different perspectives given the monitored agent (in our case: human 1, human 2 or the robot itself). Besides giving a view of the input world in the perspective of the monitored agent, it aggregates all the information gathered by this agent. Consequently, it does not offer a snapshot of the agent belief at a particular time but an aggregated version along the time.
+This world \texttt{STABLE} is then used by a \textit{perspective filter} client to provide different perspectives given the monitored agent (in our case: human 1, human 2 or the robot itself). Besides giving a view of the input world in the perspective of the monitored agent (through the robot's own perspective), it aggregates all the information visibly gathered by this agent. Consequently, it does not offer a snapshot of the agent belief at a particular time but an aggregated estimation along the time.
 
+With this network, we are able to assess among other things that the object on the table is seen by the robot and human 1 but not by human 2. Moreover, if human 1 moves in a position where the object becomes not visible for him, the \textit{perspective filter} will keep the knowledge about the fact that he has already seen it (and keep the last position where it has been seen).
 
+%This knowledge could then be used by planner such as HATP to plan differently given the knowledge or ignorance of an agent regarding the environment.
 
+We are currently setting up this kind of network in the framework of the European project MuMMER where a Pepper robot is intended to handle interactive situations in a Mall in Finland. One of the situation is a guiding task where Pepper will help people to find their route by pointing them landmarks and explaining them how to reach a destination. The use of \uwds enables to get knowledge about what the customer sees (or has seen) or not and to handle the task accordingly. We plan also to be able to add information coming from the dialogue (e.g. if the customer says that he has seen a particular landmark that could consequently be added to his belief world). Moreover, we plan also to use imaginary world (as explained in \ref{})would be able to infer a possible world where the customer will be put in front of the desired shop to be able to explain him what he will see at destination.
 
+TODO LAAS: on est en train de reflechir a mettre dans l'exemple un nouvau monde simule (notre cas d'ecole c'est qu'on place le bonhomme en simule devant un magasin et on est capable de calculer ce qu'il verra en face de ce magasin) mais il faut qu'on le fasse coller avec l'exemple qu'on a 
 
 \section{Discussion and Conclusion}
 
