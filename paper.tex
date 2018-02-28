@@ -648,6 +648,7 @@ Currently, the process is unidirectional: the {\tt uwds tf} client performs TF
 to \uwds updates, but not the reverse.
 
 \subsection{Spatial Reasoning and Perspective Taking}
+\label{spatial}
 
 Spatial reasoning~\cite{O'Keefe1999} is a field in its own right, and has been
 used for natural language processing for applications such as direction
@@ -777,18 +778,25 @@ participant.
 
 \subsection{Application to joint-action situations}
 
-\uwds is used 
-%within the European MuMMER project
-to be able to assess visibility and knowledge about objects, places and agents within the scene.
+\uwds is used within the European project MuMMER for service robots to compute
+visibility and knowledge about objects, places and agents within a mall
+environment.
 
-Let's imagine a little example with two humans and a robot looking at a table. On the table there is an object that is only seen by one human and the robot (it is hidden for the second human). Figure~\ref{fig|mummerarchitecture} illustrates the topology of the \uwds network we can define for this example. 
+We present here a simplified scenario, yet representative of situations which
+are processed in real-time by MuMMER robots: two humans and a robot are looking
+at a table and have to coordinate joint actions (pick and place).  One object on
+the table (the green box) is only visible to one human and the robot, but hidden
+to the second human. The robot needs to take into account this fact to generate
+appropriate and legible joint manipulation actions.
+Figure~\ref{fig|mummerarchitecture} illustrates the topology of the \uwds
+network that we use to this end. 
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{l2tor-photo2-blind}
-    \caption{TODO LAAS: update photo -> MuMMER picture?}
-    \label{fig|mummer-example}
-\end{figure}
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=\linewidth]{l2tor-photo2-blind}
+%    \caption{TODO LAAS: update photo -> MuMMER picture?}
+%    \label{fig|mummer-example}
+%\end{figure}
 
 %\uwds has been used within the European MuMMER project
 %in order to conceptualise and visualise the spatial relations and visibility of
@@ -798,27 +806,74 @@ Let's imagine a little example with two humans and a robot looking at a table. O
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{laasudws}
-    \caption{TODO LAAS update archi -- Schema of the \uwds architecture used in
-    the MuMMER project. }
+    \caption{Schema of the \uwds architecture used in the MuMMER project.
+    Clients (blue boxes) read and generate worlds (whose names are in typewriter
+    fonts).}
     \label{fig|mummerarchitecture}
 \end{figure}
 %The interaction scenario requires a number of \uwds clients. The clients are
 %distributed across...
 
-A first client \textit{env\_provider} provides the environment set-up and allows to build a first \texttt{ENV} world where static objects/furnitures and walls are present. 
-Then, the system cascades three worlds successively by the help of three clients. \textit{robot\_monitor} provides a first world where the robot is present. \textit{humans\_monitor} provides a new world where the humans are present (using~\cite{Khalidov_Idiap-RR-02-2017}). \textit{object\_monitor} provides a new world where the objects are present (using {\tt ar\_track\_alvar}\footnote{\url{http://wiki.ros.org/ar_track_alvar}}). At this end we obtain a world \texttt{BASE}.
+A first client, \textit{env\_provider}, provides the environment models and
+allows to build a first \texttt{ENV} world where static objects, furnitures and
+walls are present.  Then, three worlds cascade through three (independent)
+clients: \textit{robot\_state\_monitor} augments {\tt ENV} with the robot state
+(using underneath the ROS robot state publisher node) and broadcast a new world
+{\tt ENV\_ROBOTS}. \textit{objects\_monitor} then recognises and adds the
+dynamic objects (using {\tt
+ar\_track\_alvar}\footnote{\url{http://wiki.ros.org/ar_track_alvar}}).
+\textit{object\_monitor} finally detects and adds the humans
+(using~\cite{Khalidov_Idiap-RR-02-2017}). It broadcasts a world called {\tt
+BASE} that eventually contains the static environment, the robots, the dynamic
+objects and the detected humans.
 
-This world \texttt{BASE} is then passed through a \textit{physics filter} client as explained in section~\ref{physics} to obtain a \texttt{STABLE} world where all elements are present and consistent: robot, humans, objects and static environment. On this world, we use \textit{Computation of spatial relations} client to get information such as {\tt onTop}, {\tt isIn} or {\tt isAbove}.
+The world \texttt{BASE} goes through a \textit{physics filter} client as
+explained in section~\ref{physics} to obtain the \texttt{STABLE} world where all
+elements are present with physically-consistent locations. This
+physically-correct world is used by the
+\textit{computation\_of\_spatial\_relations} client to compute spatial relations
+such as {\tt onTop}, {\tt isIn} or {\tt isAbove} (see Section~\ref{spatial}).
 
-This world \texttt{STABLE} is then used by a \textit{perspective filter} client to provide different perspectives given the monitored agent (in our case: human 1, human 2 or the robot itself). Besides giving a view of the input world in the perspective of the monitored agent (through the robot's own perspective), it aggregates all the information visibly gathered by this agent. Consequently, it does not offer a snapshot of the agent belief at a particular time but an aggregated estimation along the time.
+The world \texttt{STABLE} is also used by a \textit{perspectives\_filter} client
+to compute the different visual perspectives of each agent (in our case: human
+1, human 2 and the robot itself). In addition to a 3D rendering of the input
+world from the perspective of the agent, it aggregates the history of what was
+visible to the agent at a given point in time. As such, it does not only offer a
+snapshot of the agent visual perspective at the current time but also act as the
+visual memory of each agent.
 
-With this network, we are able to assess among other things that the object on the table is seen by the robot and human 1 but not by human 2. Moreover, if human 1 moves in a position where the object becomes not visible for him, the \textit{perspective filter} will keep the knowledge about the fact that he has already seen it (and keep the last position where it has been seen).
 
-It has to be noticed that this knowledge could be wrong relatively to the current "real" state of the world, but it represents the monitored agent belief about the world.
+With this network, the robot can easily compute that an object on
+the table is only seen by the human 1 and not the human 2; additionally, if
+human 1 moves in a position where the object is not visible anymore to him, the
+\textit{perspective\_filter} will maintain the knowledge that the human had
+seen it (and keep the last position where it has been seen).
+
+\uwds makes it possible to implement such a geometric reasoning pipeline in a
+fully decoupled way, and each intermediary ``world'' can be easily introspected
+at run-time. As such, \uwds facilitates the implementation and debugging of complex
+spatio-temporal reasoning pipelines.
 
 %This knowledge could then be used by planner such as HATP to plan differently given the knowledge or ignorance of an agent regarding the environment.
 
-We are currently setting up this kind of network in the framework of the European project MuMMER where a Pepper robot is intended to handle interactive situations in a Mall in Finland. One of the situation is a guiding task where Pepper will help people to find their route by pointing them landmarks and explaining them how to reach a destination. The use of \uwds enables to get knowledge about what the customer sees (or has seen) or not and to handle the task accordingly. We plan also to be able to add information coming from the dialogue (e.g. if the customer says that he has seen a particular landmark that could consequently be added to his belief world). Moreover, we plan also to use alternative world ability given by \uwds (as explained in \ref{alter}) (e.g. to create a world where we put the customer in front of the desired shop to infer (and be able to explain him) what he will see at destination).
+We are currently deploying a similar network in the framework of the
+European project MuMMER where a Pepper robot handles interactive
+situations in a large shopping centre in Finland. One of the situation is a guiding task where
+Pepper will help people to find their route by pointing them landmarks and
+explaining them how to reach a destination. \uwds effectively facilitates the
+implementation of the required robotic architecture where perception and high-level
+reasoning (including complex, human-aware reasoning) have to be tightly
+integrated, and yet are developed across multiple partners with different
+expertise.
+
+%enables to get
+%knowledge about what the customer sees (or has seen) or not and to handle the
+%task accordingly. We plan also to be able to add information coming from the
+%dialogue (e.g. if the customer says that he has seen a particular landmark that
+%could consequently be added to his belief world). Moreover, we plan also to use
+%alternative world ability given by \uwds (as explained in \ref{alter}) (e.g. to
+%create a world where we put the customer in front of the desired shop to infer
+%(and be able to explain him) what he will see at destination).
 
 \section{Discussion and Conclusion}
 
