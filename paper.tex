@@ -116,21 +116,6 @@ application of a plan, etc.
 
 \subsection{Distributed Situation Assessment}
 
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[width=\linewidth]{overview}
-    \caption{Schema of a possible \uwds network: eight \emph{clients} (user-written \&
-    architecture specific; in blue) are sharing environment
-    models through four independent \emph{worlds} (made from joint spatial and
-    temporal models). This architecture enables successive and modular
-    refinement of the models (\emph{cascading} situation assessment),
-    effectively adapted to each client's needs.}
-
-    \label{fig|scene}
-
-\end{figure}
-
-
 Anchoring perceptions in a symbolic model suitable for decision-making requires
 perception abilities and their symbolic interpretation. We call \emph{physical
 situation assessment} the cognitive skill that a robot exhibits when it
@@ -276,6 +261,21 @@ that we call \emph{cascading situation assessment}.
 
 \section{Design and Architecture}
 \label{design}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{overview}
+    \caption{Schema of a possible \uwds network: eight \emph{clients} (user-written \&
+    architecture specific; in blue) are sharing environment
+    models through four independent \emph{worlds} (made from joint spatial and
+    temporal models). This architecture enables successive and modular
+    refinement of the models (\emph{cascading} situation assessment),
+    effectively adapted to each client's needs.}
+
+    \label{fig|scene}
+
+\end{figure}
+
 
 %\subsection{Formal description}
 %
@@ -426,16 +426,6 @@ the timeline, \ie states with a start time and a (possibly open-ended) end time.
 %states of the world. This capability is anticipated to be primarily used by \uwds clients
 %performing action recognition.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{uwds-screenshot}
-    \caption{Screenshot of the {\tt uwds view} 3D visualisation and manipulation
-    client. In this particular example, the 3D meshes have been pre-loaded using
-    {\tt uwds load}. Their positions are then updated at run-time using the
-    robot's sensors and proprioception (joint state).}
-    \label{fig|uwds-view}
-\end{figure}
-
 \subsection{Distributed spatio-temporal models}
 \label{arch}
 
@@ -572,6 +562,17 @@ The \uwds package provides several standard clients to perform common tasks on
 \uwds networks.
 
 \subsubsection{3D Visualisation and manipulation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{uwds-screenshot}
+    \caption{Screenshot of the {\tt uwds view} 3D visualisation and manipulation
+    client. In this particular example, the 3D meshes have been pre-loaded using
+    {\tt uwds load}. Their positions are then updated at run-time using the
+    robot's sensors and proprioception (joint state).}
+    \label{fig|uwds-view}
+\end{figure}
+
 
 Interestingly, while \uwds deals with 3D geometries and scenes, it does
 represent 3D entities purely as data structures; no visual representation is
