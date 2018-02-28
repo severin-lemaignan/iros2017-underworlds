@@ -559,8 +559,8 @@ with underworlds.Context("small_object_filter") as ctx:
 \end{pythoncode}
     \caption{Example of a simple yet complete \uwds filter, written in Python:
     the client connects to the \uwds network, blocks until the world {\tt
-    example\_in} changes, and only propagate nodes that match the condition to
-    the world {\tt example\_out}.}
+    world1} changes, and only propagate nodes that match the condition to
+    the world {\tt world2}.}
 
     \label{lst|pythonapi}
 \end{listing}
@@ -623,8 +623,7 @@ between the clients and the worlds, as well as their activity.
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{tools}
-    \caption{Screenshots of the timeline (top) and network (bottom)
-    introspection tools. Worlds are represented as boxes; clients as ellipses.}
+    \caption{Screenshot of the network topology introspection tool. Worlds are represented as boxes; clients as ellipses.}
     \label{fig|explorer}
 \end{figure}
 
@@ -658,20 +657,21 @@ grounding~\cite{Tellex2010}. Other examples in human-robot interaction include R
 into a full architecture for autonomous human-robot
 interaction~\cite{lemaignan2016artificial}.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\linewidth]{spatialrelations}
-    \caption{The {\tt spatial\_relations} client computes perspective-aware
-    spatial relations between objects and agents: \emph{allo-centric} relations (like
-    {\tt is in} or {\tt is on}) are independent of the viewpoint, while
-    \emph{ego-centric} relations ({\tt in front of}, {\tt left of}) depend on
-    the viewer perspective.}
-    \label{fig|spatialrelations}
-\end{figure}
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=\linewidth]{spatialrelations}
+%    \caption{The {\tt spatial\_relations} client computes perspective-aware
+%    spatial relations between objects and agents: \emph{allo-centric} relations  are independent of the viewpoint, while
+%    \emph{ego-centric} relations ({\tt in front of}, {\tt left of}) depend on
+%    the viewer perspective.}
+%    \label{fig|spatialrelations}
+%\end{figure}
 
 \uwds provides an exemplary client ({\tt spatial\_relations}) to compute both
-allo-centric and ego-centric (\ie viewer-dependent) spatial relations
-between objects (Figure~\ref{fig|spatialrelations}).
+allo-centric (independent of the viewpoint like {\tt isIn} or {\tt isOn}) and
+ego-centric (\ie viewer-dependent, like {\tt inFrontOf} or {\tt leftOf}) spatial relations
+between objects.
+%(Figure~\ref{fig|spatialrelations}).
 Other libraries, like QSRLib~\cite{gatsoulis2016qsrlib}, that implement
 computational models of Qualitative Spatial Relations could be trivially
 combined with \uwds to provide more advanced geometric analysis.
