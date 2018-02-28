@@ -609,10 +609,21 @@ capability is provided by the {\sc assimp} library.
 
 \subsubsection{Physics simulation}\label{physics}
 
-When perception modules provide objects localization, the consistency is not guarantee, objects on a table seem to slightly flight in the air, when dropping them in a bin the localization is not updated any more when the objects are occulted, resulting in objects that fly just above the bin.
+When perception modules provide objects localisation, the physical consistency
+of the locations is not typically enforced. For instance, objects that are
+supposed to lay on a table might be slightly above (or inset into) the table; or
+when dropping an item into a box, the robot can not update the location of the
+item anymore as it becomes occluded.
 
-Being able to manage that issues by simulating the gravity is the purpose of a dedicated client  
-{\tt physics filter} that have been designed using Bullet RT physics simulation and pybullet \url{https://pybullet.org/} library, it provides from an input world, an output world where objects described by an URDF file are filtered by the simulator, which gives us the near future of the objects based on their position, mass and inertia.
+These issues can be alleviated by relying on a physics simulation to stabilise
+the position of objects: natural physics (including gravity) are simulated for a
+short amount of time (up to one second) ahead of time, and the objects'
+positions are updated accordingly. To this end, \uwds provide a standard filter,
+the {\tt physics\_filter}, based on the Bullet RT physics simulation and the
+{\tt pybullet}\footnote{\url{https://pybullet.org/}} library. It generates an
+output world that mirrors its input world after a specific duration of physics
+simulation,  the physical properties of objects (including mass, friction,
+inertia) being provided from standard URDF descriptions.
 
 \subsubsection{Introspection and debugging}
 
