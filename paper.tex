@@ -129,19 +129,20 @@ maps~\cite{Nuechter2008, Galindo2008,Blodow2011} or affordance-based planning
 and object classification~\cite{Lorken2008, Varadarajan2011}.
 
 
-\uwds (as well as {\sc TOASTER} (\emph{Tracking Of Agents and Spatio-TEmporal Reasoning})~\cite{milliezframework2014}) is specifically inspired by geometric and temporal reasoners like {\sc Spark}
-(\emph{SPAtial Reasoning \& Knowledge})~\cite{sisbot2011situation}.{\sc Spark}
-acts as a situation assessment reasoner that generates symbolic knowledge from
-the geometry of the environment with respect to relations between objects,
-robots and humans. It also takes into account the different perspective that
-each agent has on the environment. {\sc Spark} embeds a modality-independent
-geometric model of the environment that serves both as basis for the fusion of
-the perception modalities and as bridge with the symbolic
-layer~\cite{lemaignan2016artificial}. This geometric model is built from 3D CAD
-models of the objects, furniture and robots, and full body, rigged models of
-humans. It is updated at run-time by the robot's sensors.  Likewise, \uwds
-embeds a grounded amodal model of the environment, updated online from the
-robot's sensors (sensor fusion).
+\uwds  is specifically inspired by geometric and temporal reasoners like {\sc
+Spark} (\emph{SPAtial Reasoning \& Knowledge})~\cite{sisbot2011situation} or
+{\sc toaster} (\emph{Tracking Of Agents and Spatio-TEmporal
+Reasoning})~\cite{milliezframework2014}. {\sc Spark} acts as a situation
+assessment reasoner that generates symbolic knowledge from the geometry of the
+environment with respect to relations between objects, robots and humans. It
+also takes into account the different perspective that each agent has on the
+environment. {\sc Spark} embeds a modality-independent geometric model of the
+environment that serves both as basis for the fusion of the perception
+modalities and as bridge with the symbolic layer~\cite{lemaignan2016artificial}.
+This geometric model is built from 3D CAD models of the objects, furniture and
+robots, and full body, rigged models of humans. It is updated at run-time by the
+robot's sensors.  Likewise, \uwds embeds a grounded amodal model of the
+environment, updated online from the robot's sensors (sensor fusion).
 
 However, {\sc Spark} is a monolithic module that does not support sharing its
 internal 3D model with other external components. In contrast, \uwds focuses on
