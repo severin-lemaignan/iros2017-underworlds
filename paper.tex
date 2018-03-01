@@ -219,18 +219,20 @@ processing (for instance, running a physics simulation). Such a tool would
 benefit a flexible representation system, where models are derived from each
 other, with partial modifications and different timescales.
 
-A third example relates to human-robot interaction scenarios where \emph{perspective
-taking} is important (a prototypical example being the game `I spy with my
-little eye', as implemented in~\cite{ros2010which}). Perspective taking is a
-cognitive skill that relies on the ability for an agent to take someone else's
-point of view to estimate what they see from their perspectives. 
-Perspective taking has previously been implemented in robotics by temporarily placing
-virtual cameras at eye locations for each of the humans tracked by the
+A third example relates to human-robot interaction scenarios where
+\emph{perspective taking} is important (a prototypical example being the game `I
+spy with my little eye', as implemented in~\cite{ros2010which}). Perspective
+taking is a cognitive skill that relies on the ability for an agent to take
+someone else's point of view to estimate what they see from their perspectives.
+Perspective taking has previously been implemented in robotics by temporarily
+placing virtual cameras at eye locations for each of the humans tracked by the
 robot~\cite{ros2010solving}. While acceptable for simple cases, such an approach
-does not maintain truly independent models of the environment for each
-agent, and in particular does not permit false-belief
-modelling~\cite{lemaignan2015mutual} whereas separate, independent world models
-would effectively support such a skill.
+does not maintain truly independent spatio-temporal models of the environment
+for each agent, and in particular, it does not permit the representation of
+proper false-belief situations. On the contrary, separate, independent world
+models as implemented by \uwds effectively support such a skill, which is an
+important precursor to research and implement human's mind modelling (\ie a
+theory of mind)~\cite{lemaignan2015mutual}.
 
 Lastly, geometric \emph{pre-supposition accommodation} makes another interesting
 case for alternative worlds representation. \emph{Pre-supposition accommodation}
@@ -794,8 +796,11 @@ topology of the \uwds network that we use to this end.
     \centering
     \includegraphics[width=\linewidth]{laasudws}
     \caption{Schema of the \uwds architecture used in the MuMMER project.
-    Clients (blue boxes) read and generate worlds (whose names are in typewriter
-    fonts).}
+    Clients (blue boxes) read and generate the worlds whose names are in typewriter
+    fonts. The last two worlds, {\tt HUMAN\{1,2\}\_PERSPECTIVE}, do not only
+    represent the immediate visual perspective of the two humans, but integrate
+    as well their past visual perceptions. As such, they are the \emph{visual
+    memories} of the humans, that the robot can rely on when making decisions.}
     \label{fig|mummerarchitecture}
 \end{figure}
 %The interaction scenario requires a number of \uwds clients. The clients are
