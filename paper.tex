@@ -688,9 +688,11 @@ ego-centric (\ie viewer-dependent, like {\tt inFrontOf} or {\tt leftOf}) spatial
 between objects.
 %(Figure~\ref{fig|spatialrelations}).
 Other libraries, like QSRLib~\cite{gatsoulis2016qsrlib}, that implement
-computational models of Qualitative Spatial Relations could be trivially
+computational models of Qualitative Spatial Relations, could be trivially
 combined with \uwds to provide more advanced geometric analysis.
-
+Future developments will also include the results of the more basic
+research on spatio-temporal reasoning for robotics, led by de Leng and
+Heintz~\cite{deleng2016qualitative}.
 
 \uwds also implements an efficient algorithm to assess object visibility from a
 specific viewpoint (\ie from a given \emph{perspective} node). The algorithm (color
@@ -926,21 +928,30 @@ multiple partners in different countries, with different expertise.
 
 Like traditional robotic middleware, \uwds offers a form of distributed
 computation based on message passing. However, it distinguishes itself from
-existing middleware in significant ways. Most importantly, \uwds purposefully
-does not offer any \emph{general} capability to distribute computation and data
-flow amongst independent components: it focusses specifically on distributing
-environment models, both spatial (geometric models) and temporal (events and
-situations). In that sense, \uwds really is a \emph{distributed datastructure}
-that addresses the specific needs of spatio-temporal modelling,
-including the modelling of hypothetical, alternative world models, something
-that traditional middlewares like ROS do not address adequately.
+existing middlewares (including ROS extensions like
+DyKnow~\cite{de_leng_dyknow:_2016}) in significant ways. Most importantly,
+\uwds purposefully does not offer any \emph{general} capability to distribute
+computation and data streams amongst independent components: it focusses
+specifically on distributing environment models, both spatial (geometric
+models) and temporal (events and situations). In that sense, \uwds really is a
+\emph{distributed datastructure} that addresses the specific needs of
+spatio-temporal modelling, including the modelling of hypothetical, alternative
+world models, something that traditional middlewares like ROS do not address
+adequately. Second, and as presented above, \uwds offers specific mechanisms
+for the representation and manipulation of alternative world models that are
+not directly achievable with traditional tools.
 
 While using standard middleware as \emph{underlying transport} for \uwds would be
 technically feasible and relatively easy to implement, it does not offer any
 clear advantage over lighter and dedicated message passing libraries like ZeroMQ
 or gRPC (the later being the one used by \uwds).
 
-\uwds distinguishes itself from DyKnow framework ~\cite{de_leng_dyknow:_2016} that have investigated stream reasoning as key a feature for spatial and temporal reasoning because DyKnow aim to address a large variety of data types, which is why auto configurable systems~\cite{leng_towards_2017} based on the semantic are useful where \uwds only distribute one type of geometric(scene tree) and temporal(timeline) models of the environment as explained above.
+%\uwds also differs from the DyKnow framework~\cite{de_leng_dyknow:_2016}.
+%DyKnow investigates stream reasoning as a central concept for spatial and
+%temporal modelling, with a recent focus on semantic-aware auto-configurable
+%systems~\cite{leng_towards_2017}. \uwds
+%only distribute one type of spatial (scene graph) and temporal (timeline)
+%datastructures, as explained above.
 
 \subsection{Future work}
 \label{futurework}
