@@ -472,9 +472,11 @@ client can then request the full data whenever it is actually needed.
 (with nodes representing spatial entities) and a timeline (where events are
 stored as a flat list). Typical time and space complexities arise from these
 datastructures. In typical usage scenarios (where the number of nodes or events
-remain relatively small), the computational load to manipulate these
+remain under a few hundred relatively small), the computational load to manipulate these
 datastructures is however dominated by the actual processings performed by the
-clients with the data.
+clients with the data. In the current implementation, scene graphs and timelines
+are stored in-memory. Were they required, serialization and persistent storage
+are not anticipated to be difficult to implement.
 
 More interesting is the time complexity of distributing changes across an \uwds
 network. With $n$ the number of worlds and $m$ the number of clients in an \uwds
@@ -642,7 +644,11 @@ between the clients and the worlds, as well as their activity.
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{tools}
-    \caption{Screenshot of the network topology introspection tool. Worlds are represented as boxes; clients as ellipses.}
+    \caption{Screenshot of the network topology introspection tool, with
+    arbitrary examples of worlds (represented as boxes) and clients (ellipses).
+    CLients are connected to the worlds either as
+    \emph{readers} or \emph{providers} of data. \uwds introspection features
+    make it possible to also visualise when clients were last active.}
     \label{fig|explorer}
 \end{figure}
 
@@ -802,10 +808,11 @@ topology of the \uwds network that we use to this end.
     \centering
     \includegraphics[width=\linewidth]{laasudws}
     \caption{Schema of the \uwds architecture used in the MuMMER project.
-    Clients (blue boxes) read and generate the worlds whose names are in typewriter
-    fonts. The last two worlds, {\tt HUMAN\{1,2\}\_PERSPECTIVE}, do not only
-    represent the immediate visual perspective of the two humans, but integrate
-    as well their past visual perceptions. As such, they are the \emph{visual
+    Clients read and generate the worlds {\tt ENV} $\rightarrow$ {\tt
+    ENV\_ROBOT} $\rightarrow$ \ldots $\rightarrow$ {\tt
+    HUMAN*\_PERSPECTIVE}. The last two worlds {\tt HUMAN\{1,2\}\_PERSPECTIVE}
+    represent the immediate visual perspective of each of the humans, as well as
+    their past visual perceptions. As such, they are the \emph{visual
     memories} of the humans, that the robot can rely on when making decisions.}
     \label{fig|mummerarchitecture}
 \end{figure}
